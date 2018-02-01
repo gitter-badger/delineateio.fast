@@ -2,22 +2,17 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 
-namespace Delineate.Fast
+namespace Delineate.Cloud.Fast
 {
-    [CommandMatch(new String[]{"clean"} )]
-    public class CleanCommand : Command
+    [CommandMatch(Key="clean")]
+    public sealed class CleanCommand : Command
     {
-        protected override void Apply(CommandArgs args)
-        {   
-                
-        }
-
-        private void ApplyTree()
+        protected override void Prepare()
         {
-            File.Delete("fast.config");
-            Directory.Delete("tests");
-            Directory.Delete("ops");
-            Directory.Delete("tests");
+            Root.Add("fast.config", NodeTypes.File, NodeOperations.Delete);
+            Root.Add("dev", NodeTypes.Directory, NodeOperations.Delete);
+            Root.Add("ops", NodeTypes.Directory, NodeOperations.Delete);
+            Root.Add("tests", NodeTypes.Directory, NodeOperations.Delete);
         }
     }
 }

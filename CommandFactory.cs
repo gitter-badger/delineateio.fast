@@ -1,42 +1,40 @@
 using System;
 using System.Collections.Generic;
 
-namespace Delineate.Fast
+namespace Delineate.Cloud.Fast
 {
-    public abstract class CommandFactory
+    public sealed class CommandFactory
     {
-        public static Command Create(CommandArgs args)
+        public static Command Create(ProgramArgs programArgs)
         {
-            //Gets the list of commands
-            SortedDictionary<CommandArgs, Type>  commands = GetCommands();
-
-            Type foundCommand = null;
-
-            //Searches 
-            for(int i = 0; i < args.Values.Length; i++)
-            {
-                CommandArgs searchArgs = new CommandArgs(new string[]{"init"});
-                Type currentType = commands[searchArgs];
-                if( currentType == null) 
-                    break;
-                
-                foundCommand = currentType;
-            } 
-
-            // Return the commands
-            if (foundCommand == null )
-            {
-                foundCommand = typeof(NullCommand);
-            }
-
-            return Activator.CreateInstance(foundCommand) as Command;
+            SortedDictionary<string, Type> commands = GetCommands();
+            return CreateCommand(commands, programArgs);
         }
 
-        public static SortedDictionary<CommandArgs, Type> GetCommands()
+        private static Command CreateCommand(SortedDictionary<string, Type> commands, ProgramArgs programArgs)
         {
-            SortedDictionary<CommandArgs, Type> commands = new SortedDictionary<CommandArgs, Type>();
-            CommandArgs args = new CommandArgs(new string[]{"init"});
-            commands.Add(args, typeof(InitCommand));
+            Type commandType = typeof(NullCommand);
+            List<string> args = new List<string>();
+
+            for(int i = 0; i < programArgs.Values.Length; i++)
+            {   
+                args.Add(programArgs.Values[i]);
+                string match = string.Join(ProgramArgs.SEPERATOR, args);
+
+                if( ! commands.ContainsKey(match))
+                    break;
+                
+                commandType = commands[match];
+            } 
+
+            return Activator.CreateInstance(commandType) as Command;
+        }
+
+        private static SortedDictionary<String, Type> GetCommands()
+        {
+            SortedDictionary<string, Type> commands = new SortedDictionary<string, Type>();
+            commands.Add("init", typeof(InitCommand));
+            commands.Add("clean", typeof(CleanCommand));
             return commands;
         }
     }

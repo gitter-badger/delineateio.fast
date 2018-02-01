@@ -1,32 +1,57 @@
-using System; 
+using System;
 using System.Collections;
+using System.Collections.Generic;
 
-namespace Delineate.Fast
+namespace Delineate.Cloud.Fast
 {
-    public class CommandArgs: IComparable<CommandArgs>
+    public sealed class CommandArgs 
     {
-        public CommandArgs(string[] args)
-        {
-            String[] cleanArgs = new String[args.Length];
-            
-            for(int i = 0; args.Length > i; i++)
-            {
-                cleanArgs[i] = args[i].ToLower();
-            }
+        private Dictionary<string, List<string>> Args { get; set; } 
 
-            Values = cleanArgs;
-        }
-        
-        public int CompareTo(CommandArgs args)
+        public CommandArgs()
         {
-            for(int i =0; args.Values.Length > i ; i++)
-            {
-                if(Values[i] != args.Values[i]) return 1; 
-            }
-
-            return 0;
+            Args = new Dictionary<string, List<string>>();
         }
-        
-        public string[] Values {get; private set;}
-    }
+
+        public bool Has(string key)
+        {
+            return Args.ContainsKey(key);
+        }
+
+        public bool IsForced
+        {
+            get{ return Args.ContainsKey(CommandOptions.FORCE); }
+        }
+
+        public bool IsHelp
+        {
+            get { return Args.ContainsKey(CommandOptions.HELP); }
+        }
+
+        public void Add(string key, string value = null)
+        {
+            if( Has( key) )
+            {
+                List<string> values = Get(key);
+                values.Add(value);
+            }
+            else
+            {
+                if(value == null)
+                {
+                    Args.Add(key, null);
+                }
+                else
+                {
+                    List<string> values = new List<string>();
+                    values.Add(value);
+                    Args.Add(key, values);
+                }
+            }
+        }
+        public List<string> Get(string key)
+        {
+            return Args[key];
+        }
+    }    
 }

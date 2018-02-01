@@ -1,11 +1,11 @@
 using System;
 using System.IO;
 
-namespace Delineate.Fast
+namespace Delineate.Cloud.Fast
 {
     public abstract class NullCommand: Command
     {
-        protected override void Apply(CommandArgs args)
+        protected override void Prepare()
         {
             Console.WriteLine("No matching command was found");
         }
