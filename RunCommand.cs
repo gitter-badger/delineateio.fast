@@ -1,6 +1,6 @@
 using System;
 
-namespace Delineate.Cloud.Fast
+namespace Delineate.Fast
 {
     /// <summary>
     /// Setup command that is used to create the project artefacts 

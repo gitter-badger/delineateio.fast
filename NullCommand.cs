@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace Delineate.Cloud.Fast
+namespace Delineate.Fast
 {
     /// <summary>
     /// Null command is returned if there 

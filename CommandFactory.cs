@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Delineate.Cloud.Fast
+namespace Delineate.Fast
 {
     /// <summary>
     /// Command factory for locating the commands

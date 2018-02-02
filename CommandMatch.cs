@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 
-namespace Delineate.Cloud.Fast
+namespace Delineate.Fast
 {
     /// <summary>
     /// Decorator attritute to identify commands for dynamic laoding 

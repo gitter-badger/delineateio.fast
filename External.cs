@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Delineate.Cloud.Fast
+namespace Delineate.Fast
 {
     public static class External
     {

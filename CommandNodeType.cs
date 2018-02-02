@@ -1,4 +1,4 @@
-namespace Delineate.Cloud.Fast
+namespace Delineate.Fast
 {
     /// <summary>
     /// Value type for the node type in the tree

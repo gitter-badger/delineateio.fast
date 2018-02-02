@@ -1,6 +1,6 @@
 using System;
 
-namespace Delineate.Cloud.Fast
+namespace Delineate.Fast
 {
     /// <summary>
     /// Encapulsates the results of the 

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Resources;
 
-namespace Delineate.Cloud.Fast
+namespace Delineate.Fast
 {
     /// <summary>
     /// Wrapper class for managing a list of available options

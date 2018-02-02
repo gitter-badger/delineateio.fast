@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Delineate.Cloud.Fast
+namespace Delineate.Fast
 {
     /// <summary>
     /// Represents a node in the command that will

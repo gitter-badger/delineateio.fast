@@ -4,7 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Resources;
 
-namespace Delineate.Cloud.Fast
+namespace Delineate.Fast
 {
     /// <summary>
     /// Base class for all the commmands for Fast

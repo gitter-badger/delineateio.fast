@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Delineate.Cloud.Fast
+namespace Delineate.Fast
 { 
     /// <summary>
     /// The Operation to be taken for a node 
