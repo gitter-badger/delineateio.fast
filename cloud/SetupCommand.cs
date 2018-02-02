@@ -1,12 +1,12 @@
 using System;
 
-namespace Delineate.Fast
+namespace Delineate.Fast.Cloud
 {
     /// <summary>
     /// Setup command that is used to create the project artefacts 
     /// </summary>
-    [CommandMatch(Key="run")]
-    public sealed class RunCommand : Command
+    [CommandMatch(Key="cloud:setup")]
+    public sealed class SetupCommand : Command
     {
         #region Prepare
 

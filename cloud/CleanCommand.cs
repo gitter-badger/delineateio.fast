@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 
-namespace Delineate.Fast
+namespace Delineate.Fast.Cloud
 {
     /// <summary>
     /// Command to clean the current project and remove
@@ -10,7 +10,7 @@ namespace Delineate.Fast
     /// <remarks>
     /// The -f option can be used to force the clean
     /// </remarks>
-    [CommandMatch(Key="clean")]
+    [CommandMatch(Key="cloud:clean")]
     public sealed class CleanCommand : Command
     {
         /// <summary>

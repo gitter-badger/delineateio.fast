@@ -1,0 +1,3 @@
+/Users/jonathan/Code/delineateio/delineateio.fast.cloud/obj/Debug/netstandard2.0/delineateio.fast.cloud.csproj.CoreCompileInputs.cache
+/Users/jonathan/Code/delineateio/delineateio.fast.cloud/obj/Debug/netstandard2.0/delineateio.fast.cloud.AssemblyInfoInputs.cache
+/Users/jonathan/Code/delineateio/delineateio.fast.cloud/obj/Debug/netstandard2.0/delineateio.fast.cloud.AssemblyInfo.cs

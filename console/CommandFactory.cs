@@ -53,12 +53,12 @@ namespace Delineate.Fast
             //TODO: Dymaically load and cache the commands
 
             SortedDictionary<string, Type> commands = new SortedDictionary<string, Type>();
-            commands.Add("init", typeof(InitCommand));
-            commands.Add("run", typeof(RunCommand));
+            // commands.Add("init", typeof(InitCommand));
+            // commands.Add("run", typeof(RunCommand));
             commands.Add("vm:add", typeof(NullCommand));
             commands.Add("vm:remove", typeof(NullCommand));
             commands.Add("vm:list", typeof(NullCommand));
-            commands.Add("clean", typeof(CleanCommand));
+            // commands.Add("clean", typeof(CleanCommand));
             return commands;
         }
     }

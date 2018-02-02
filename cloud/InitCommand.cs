@@ -1,11 +1,11 @@
 using System;
 
-namespace Delineate.Fast
+namespace Delineate.Fast.Cloud
 {
     /// <summary>
     /// Init command sets 
     /// </summary>
-    [CommandMatch(Key="init")]
+    [CommandMatch(Key="cloud:init")]
     public sealed class InitCommand : Command
     {
         #region AddOptions
