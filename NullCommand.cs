@@ -3,11 +3,21 @@ using System.IO;
 
 namespace Delineate.Cloud.Fast
 {
-    public abstract class NullCommand: Command
+    /// <summary>
+    /// Null command is returned if there 
+    /// </summary>
+    public sealed class NullCommand: Command
     {
+        #region Prepare
+
+        /// <summary>
+        /// Override of the prepared statement 
+        /// </summary>
         protected override void Prepare()
         {
-            Console.WriteLine("No matching command was found");
+            ConsoleWriter.WriteLine("No matching command was found", ConsoleColor.Red, blank: 1);
         }
+
+        #endregion
     }
 }
