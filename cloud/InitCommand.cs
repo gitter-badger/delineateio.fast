@@ -1,4 +1,5 @@
 using System;
+using Delineate.Fast.Commands;
 
 namespace Delineate.Fast.Cloud
 {

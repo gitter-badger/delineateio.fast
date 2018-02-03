@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Delineate.Fast
+namespace Delineate.Fast.Commands
 {
     /// <summary>
     /// Command args parser
@@ -10,7 +10,7 @@ namespace Delineate.Fast
     public sealed class CommandArgsParser 
     {
         #region Properties & Fields
-        
+     
         /// <summary>
         /// List of warnings when parsing the args
         /// </summary>
@@ -49,13 +49,13 @@ namespace Delineate.Fast
         /// <param name="programArgs">The program args provided</param>
         /// <param name="options">The valid options for the command</param>
         /// <param name="args">The command args</param>
-        public void Parse(ProgramArgs programArgs,CommandOptions options, CommandArgs args)
+        public void Parse(string[] programArgs,CommandOptions options, CommandArgs args)
         {
             //TODO: Refactor 
 
-            for(int i = 0; i < programArgs.Values.Length; i++)
+            for(int i = 0; i < programArgs.Length; i++)
             {
-                string key = programArgs.Values[i];
+                string key = programArgs[i];
 
                 if(key.StartsWith("-"))
                 {
@@ -69,7 +69,7 @@ namespace Delineate.Fast
 
                         if(option.HasValue)
                         {
-                            args.Add(key, programArgs.Values[ i + 1]);
+                            args.Add(key, programArgs[ i + 1]);
                             i++;
                         }
                         else

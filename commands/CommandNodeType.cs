@@ -1,4 +1,6 @@
-namespace Delineate.Fast
+using System;
+
+namespace Delineate.Fast.Commands
 {
     /// <summary>
     /// Value type for the node type in the tree

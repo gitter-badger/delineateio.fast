@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\console\console.csproj" />
+    <ProjectReference Include="..\commands\commands.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -1,8 +1,8 @@
 /Users/jonathan/Code/delineateio/delineateio.fast/cloud/bin/Debug/netcoreapp2.0/cloud.deps.json
 /Users/jonathan/Code/delineateio/delineateio.fast/cloud/bin/Debug/netcoreapp2.0/cloud.dll
 /Users/jonathan/Code/delineateio/delineateio.fast/cloud/bin/Debug/netcoreapp2.0/cloud.pdb
-/Users/jonathan/Code/delineateio/delineateio.fast/cloud/bin/Debug/netcoreapp2.0/console.dll
-/Users/jonathan/Code/delineateio/delineateio.fast/cloud/bin/Debug/netcoreapp2.0/console.pdb
+/Users/jonathan/Code/delineateio/delineateio.fast/cloud/bin/Debug/netcoreapp2.0/commands.dll
+/Users/jonathan/Code/delineateio/delineateio.fast/cloud/bin/Debug/netcoreapp2.0/commands.pdb
 /Users/jonathan/Code/delineateio/delineateio.fast/cloud/obj/Debug/netcoreapp2.0/cloud.csproj.CoreCompileInputs.cache
 /Users/jonathan/Code/delineateio/delineateio.fast/cloud/obj/Debug/netcoreapp2.0/cloud.AssemblyInfoInputs.cache
 /Users/jonathan/Code/delineateio/delineateio.fast/cloud/obj/Debug/netcoreapp2.0/cloud.AssemblyInfo.cs

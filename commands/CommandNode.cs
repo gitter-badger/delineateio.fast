@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Delineate.Fast
+namespace Delineate.Fast.Commands
 {
     /// <summary>
     /// Represents a node in the command that will

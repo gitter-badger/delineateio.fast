@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Delineate.Fast
+namespace Delineate.Fast.Commands
 {
     public static class External
     {

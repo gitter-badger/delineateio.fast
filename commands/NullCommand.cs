@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace Delineate.Fast
+namespace Delineate.Fast.Commands
 {
     /// <summary>
     /// Null command is returned if there 

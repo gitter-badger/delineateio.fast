@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 
-namespace Delineate.Fast
+namespace Delineate.Fast.Commands
 {
     /// <summary>
     /// Class that holds the details of a specific 

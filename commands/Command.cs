@@ -4,7 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Resources;
 
-namespace Delineate.Fast
+namespace Delineate.Fast.Commands
 {
     /// <summary>
     /// Base class for all the commmands for Fast
@@ -72,7 +72,7 @@ namespace Delineate.Fast
         /// Executes the current command 
         /// </summary>
         /// <param name="programArgs">The arguments that were provided to the program</param>
-        public void Execute(ProgramArgs programArgs)
+        public void Execute(string[] programArgs)
         { 
             AddOptions(); // Add command options
             Parser.Parse(programArgs, Options, Args);

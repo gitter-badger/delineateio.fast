@@ -197,17 +197,14 @@
           "build/netstandard2.0/NETStandard.Library.targets": {}
         }
       },
-      "console/1.0.0": {
+      "commands/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v2.0",
-        "dependencies": {
-          "Microsoft.NETCore.App": "2.0.0"
-        },
         "compile": {
-          "bin/placeholder/console.dll": {}
+          "bin/placeholder/commands.dll": {}
         },
         "runtime": {
-          "bin/placeholder/console.dll": {}
+          "bin/placeholder/commands.dll": {}
         }
       }
     }
@@ -670,16 +667,16 @@
         "netstandard.library.nuspec"
       ]
     },
-    "console/1.0.0": {
+    "commands/1.0.0": {
       "type": "project",
-      "path": "../console/console.csproj",
-      "msbuildProject": "../console/console.csproj"
+      "path": "../commands/commands.csproj",
+      "msbuildProject": "../commands/commands.csproj"
     }
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v2.0": [
       "Microsoft.NETCore.App >= 2.0.0",
-      "console >= 1.0.0"
+      "commands >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -710,8 +707,8 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "/Users/jonathan/Code/delineateio/delineateio.fast/console/console.csproj": {
-              "projectPath": "/Users/jonathan/Code/delineateio/delineateio.fast/console/console.csproj"
+            "/Users/jonathan/Code/delineateio/delineateio.fast/commands/commands.csproj": {
+              "projectPath": "/Users/jonathan/Code/delineateio/delineateio.fast/commands/commands.csproj"
             }
           }
         }

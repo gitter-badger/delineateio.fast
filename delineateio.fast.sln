@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "console", "console\console.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cloud", "cloud\cloud.csproj", "{5438D26D-D0AE-4CB1-8882-2ADE41C69EDE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "commands", "commands\commands.csproj", "{33160142-32F2-40BF-9C5E-37305B965E5C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,5 +46,17 @@ Global
 		{5438D26D-D0AE-4CB1-8882-2ADE41C69EDE}.Release|x64.Build.0 = Release|x64
 		{5438D26D-D0AE-4CB1-8882-2ADE41C69EDE}.Release|x86.ActiveCfg = Release|x86
 		{5438D26D-D0AE-4CB1-8882-2ADE41C69EDE}.Release|x86.Build.0 = Release|x86
+		{33160142-32F2-40BF-9C5E-37305B965E5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33160142-32F2-40BF-9C5E-37305B965E5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33160142-32F2-40BF-9C5E-37305B965E5C}.Debug|x64.ActiveCfg = Debug|x64
+		{33160142-32F2-40BF-9C5E-37305B965E5C}.Debug|x64.Build.0 = Debug|x64
+		{33160142-32F2-40BF-9C5E-37305B965E5C}.Debug|x86.ActiveCfg = Debug|x86
+		{33160142-32F2-40BF-9C5E-37305B965E5C}.Debug|x86.Build.0 = Debug|x86
+		{33160142-32F2-40BF-9C5E-37305B965E5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33160142-32F2-40BF-9C5E-37305B965E5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33160142-32F2-40BF-9C5E-37305B965E5C}.Release|x64.ActiveCfg = Release|x64
+		{33160142-32F2-40BF-9C5E-37305B965E5C}.Release|x64.Build.0 = Release|x64
+		{33160142-32F2-40BF-9C5E-37305B965E5C}.Release|x86.ActiveCfg = Release|x86
+		{33160142-32F2-40BF-9C5E-37305B965E5C}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 EndGlobal

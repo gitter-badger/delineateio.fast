@@ -1,6 +1,6 @@
 using System;
 
-namespace Delineate.Fast
+namespace Delineate.Fast.Commands
 {
     /// <summary>
     /// Encapulsates the results of the 

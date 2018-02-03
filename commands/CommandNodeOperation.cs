@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Delineate.Fast
+namespace Delineate.Fast.Commands
 { 
     /// <summary>
     /// The Operation to be taken for a node 

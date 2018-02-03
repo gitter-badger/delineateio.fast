@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using Delineate.Fast.Commands;
 
 namespace Delineate.Fast.Cloud
 {

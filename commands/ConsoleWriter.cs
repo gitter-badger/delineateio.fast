@@ -2,7 +2,7 @@ using System;
 using System.Text;
 using System.Collections;
 
-namespace Delineate.Fast
+namespace Delineate.Fast.Commands
 {
     /// <summary>
     /// ConsoleWriter provides additional formatting options 
