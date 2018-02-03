@@ -57,7 +57,9 @@ namespace Delineate.Fast.Commands
         {
             SortedDictionary<string, Type> commands = new SortedDictionary<string, Type>();
             
-
+            //TODO: Need to ensure the dll is loaded into the App Domain
+            //TODO: Refactor the code here
+            
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies()) 
             {
                 AssemblyName name = assembly.GetName();
