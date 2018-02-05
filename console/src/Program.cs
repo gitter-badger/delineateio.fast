@@ -7,7 +7,7 @@ namespace Delineate.Fast
     {
         static void Main(string[] args)
         {  
-            args = new string[]{"cloud", "init", "-t", "[circleci, github, docker, packer, terraform]"};
+            args = new string[]{"cloud", "init", "-t", "dev"};
             args = new string[]{"cloud", "run"};
             args = new string[]{"cloud", "clean", "-f"};
             
