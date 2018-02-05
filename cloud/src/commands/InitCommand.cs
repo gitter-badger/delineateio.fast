@@ -1,7 +1,8 @@
 using System;
 using Delineate.Fast.Commands;
+using Delineate.Fast.Nodes;
 
-namespace Delineate.Fast.Cloud
+namespace Delineate.Fast.Cloud.Commands
 {
     /// <summary>
     /// Init command sets 
@@ -16,9 +17,7 @@ namespace Delineate.Fast.Cloud
         /// </summary>
         protected override void AddOptions()
         {
-            //TODO: Add the option description
-
-            Options.Add("-a", "", true);
+            Options.Add("-t", "Adds the applications to be used", aliases: "--template");
         }
 
         #endregion
@@ -30,8 +29,8 @@ namespace Delineate.Fast.Cloud
         /// </summary>
         protected override void Prepare()
         {
-            CommandNode fastDir = Root.Add(".fast");
-            fastDir.Add("config.yaml", CommandNodeType.File);
+            DirectoryNode fastDir = Root.Add<DirectoryNode>(".fast");
+            fastDir.Add<FileNode>("config.yml");
         }
 
         #endregion

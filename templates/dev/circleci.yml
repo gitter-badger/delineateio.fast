@@ -1,0 +1,184 @@
+version: 2
+jobs:
+
+  validate_dev:
+    docker:
+      - image: circleci/python:latest
+    steps:
+      - checkout
+      - run: bash dev/validate.sh
+
+
+  validate_ops:
+    docker:
+      - image: circleci/python:latest
+    steps:
+      - checkout
+      - run: bash ops/scripts/hashicorp_install.sh "packer" "1.1.3"
+      - run: bash ops/scripts/hashicorp_install.sh "terraform" "0.11.2"
+      - run: bash ops/provision/validate.sh
+      - run: bash ops/deploy/validate.sh
+
+
+  unit_tests:
+    docker:
+      - image: circleci/python:latest
+    steps:
+      - checkout
+      - run: sudo pip install -U pytest
+      - run: pytest --version
+
+
+  build_docker_stack:
+    docker:
+      - image: circleci/python:latest
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: cd dev && docker-compose build --force-rm --pull
+
+
+  provision_master_vm:
+    docker:
+      - image: circleci/python:latest
+    steps:
+      - checkout
+      - run: bash ops/scripts/hashicorp_install.sh "packer" "1.1.3"
+      - run: cd ops/provision && ./provision.sh "master"
+      - run: bash ops/provision/get_image_id.sh /home/circleci/project/state "master" 
+      - persist_to_workspace:
+          root: state
+          paths:
+            - master.id
+
+
+  provision_node_vm:
+    docker:
+      - image: circleci/python:latest
+    steps:
+      - checkout
+      - run: bash ops/scripts/hashicorp_install.sh "packer" "1.1.3"
+      - run: cd ops/provision && ./provision.sh "node"
+      - run: bash ops/provision/get_image_id.sh /home/circleci/project/state "node" 
+      - persist_to_workspace:
+          root: state
+          paths:
+            - node.id
+
+
+  deploy:
+    docker:
+      - image: circleci/python:latest
+    steps:
+      - checkout
+      - attach_workspace:
+          at: state
+      - run: bash ops/provision/get_image_ids.sh state
+      - run: bash ops/scripts/hashicorp_install.sh "terraform" "0.11.2"
+      - run: bash ops/deploy/deploy.sh "$(cat state/image.ids)"
+      - run: mv ops/deploy/terraform.tfstate state/terraform.tfstate
+      - run: 
+          when: on_fail # Cleans
+          command: bash ops/deploy/destroy.sh "$(cat state/image.ids)" /home/circleci/project/state
+      - persist_to_workspace:
+          root: state
+          paths:
+            - terraform.tfstate
+            - image.ids
+
+  http_endpoints:
+    docker:
+      - image: circleci/python:latest
+    steps:
+      - checkout
+      - run: bash ops/health/http_endpoint.sh "http://api.delineate.io" 200
+      - run: bash ops/health/http_endpoint.sh "http://mgt.delineate.io" 200
+      - run: bash ops/health/http_endpoint.sh "http://reg.delineate.io" 200
+
+
+  pings:
+    docker:
+      - image: circleci/python:latest
+    steps:
+      - checkout
+      # - run: bash ops/deploy/ping.sh - Node LB  
+      # - run: bash ops/deploy/ping.sh - Nodes
+      # - run: bash ops/deploy/ping.sh - Master
+    
+
+  port_scans:
+    docker:
+      - image: circleci/python:latest
+    steps:
+      - checkout
+      # - run: bash ops/deploy/ping.sh - Node LB  
+      # - run: bash ops/deploy/ping.sh - Nodes
+      # - run: bash ops/deploy/ping.sh - Master
+    
+
+  integration_tests:
+    docker:
+      - image: circleci/python:latest
+    steps:
+      - checkout
+      - run: echo "Integrated Ops tests here"
+      - run: echo "Integrated Feature tests here"
+
+
+  destroy:
+    docker:
+      - image: circleci/python:latest
+    steps:
+      - checkout
+      - attach_workspace:
+          at: state
+      - run: bash ops/scripts/hashicorp_install.sh "terraform" "0.11.2"
+      - run: bash ops/scripts/do_install.sh "1.7.1"
+      - run: mv state/terraform.tfstate ops/deploy/terraform.tfstate
+      - run: bash ops/deploy/destroy.sh "$(cat state/image.ids)" /home/circleci/project/state
+
+
+workflows:
+  version: 2
+  pipeline:
+    jobs:
+      - validate_dev
+      - validate_ops
+      - unit_tests:
+          requires:
+            - validate_dev
+      - build_docker_stack:
+          requires:
+            - unit_tests
+      - provision_master_vm:
+          requires:
+            - validate_ops
+      - provision_node_vm:
+          requires:
+            - validate_ops
+      - deploy:
+          requires:
+            - build_docker_stack
+            - provision_master_vm
+            - provision_node_vm
+      - http_endpoints:
+          requires:
+            - deploy
+      - pings:
+          requires:
+            - deploy 
+      - port_scans:
+          requires:
+            - deploy
+      - integration_tests:
+          requires:
+            - http_endpoints
+            - pings
+            - port_scans
+      - destroy_approval: 
+          type: approval
+          requires:
+           - integration_tests
+      - destroy:
+          requires:
+            - destroy_approval

@@ -1,8 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\cloud\cloud.csproj" />
-    <ProjectReference Include="..\commands\commands.csproj" />
+    <ProjectReference Include="..\common\common.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

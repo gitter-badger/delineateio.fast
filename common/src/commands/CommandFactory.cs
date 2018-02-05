@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
@@ -36,14 +37,15 @@ namespace Delineate.Fast.Commands
             List<string> args = new List<string>();
 
             for(int i = 0; i < programArgs.Length; i++)
-            {   
+            {
+                if(programArgs[i].StartsWith("-"))
+                    break;
+
                 args.Add(programArgs[i]);
                 string match = string.Join(":", args);
 
-                if( ! Commands.ContainsKey(match))
-                    break;
-                
-                commandType = Commands[match];
+                if( Commands.ContainsKey(match))
+                    commandType = Commands[match];
             } 
 
             return Activator.CreateInstance(commandType) as Command;
@@ -53,38 +55,29 @@ namespace Delineate.Fast.Commands
         /// Loads the commands collection if required 
         /// </summary>
         /// <returns>Returns a colelction keyed to be matched against the program args</returns>
-        private static SortedDictionary<String, Type> LoadCommands()
+        private static void  LoadCommands()
         {
-            SortedDictionary<string, Type> commands = new SortedDictionary<string, Type>();
-            
-            //TODO: Need to ensure the dll is loaded into the App Domain
-            //TODO: Refactor the code here
-            
-            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies()) 
-            {
-                AssemblyName name = assembly.GetName();
+            string path = string.Format("{0}{1}{2}",
+                                            Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                                            Path.DirectorySeparatorChar,
+                                            "commands");
 
-                if( ! name.Name.StartsWith("System"))
-                {               
-                    foreach (Type type in assembly.GetTypes())
+            foreach(string file in Directory.GetFiles(path, "*.dll"))
+            {
+                Assembly assembly = Assembly.LoadFile(file);
+
+                foreach (Type type in assembly.GetTypes())
+                {
+                    var attributes = type.GetCustomAttributes(typeof(CommandMatch));
+                    if (attributes != null)
                     {
-                        var attributes = type.GetCustomAttributes(typeof(CommandMatch), false);
-                        if (attributes != null && attributes.Length > 1)
-                        {
-                            foreach(CommandMatch attribute in attributes)
-                            {   
-                                commands.Add(attribute.Key, type);
-                            }
+                        foreach(CommandMatch attribute in attributes)
+                        {   
+                            Commands.Add(attribute.Key, type);
                         }
                     }
                 }
             }
-
-            //commands.Add("cloud:init", typeof(InitCommand));
-            //commands.Add("cloud:run", typeof(RunCommand));
-            //commands.Add("cloud:clean", typeof(CleanCommand));
-            // commands.Add("clean", typeof(CleanCommand));
-            return commands;
         }
     }
 }

@@ -10,6 +10,6 @@
                 "${workspaceFolder}/console/console.csproj"
             ],
             "problemMatcher": "$msCompile"
-        }
+        },
     ]
 }

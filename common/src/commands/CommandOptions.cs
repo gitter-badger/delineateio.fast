@@ -9,33 +9,24 @@ namespace Delineate.Fast.Commands
     /// </summary>
     public sealed class CommandOptions
     {   
-
-        #region Constants
-
-        /// <summary>
-        /// The force flag
-        /// </summary>
-        public const string FORCE = "-f";
-
-        /// <summary>
-        /// The help flag 
-        /// </summary>
-        public const string HELP = "-h";
-
-        #endregion
-
         #region Properties 
 
         /// <summary>
         /// Dictionary of the available options
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Collection of options keyed on the primary pair</returns>
         private Dictionary<string, CommandOption> Options = new Dictionary<string, CommandOption>();
+
+        /// <summary>
+        /// Access via the alias key to the options
+        /// </summary>
+        /// <returns></returns>
+        private Dictionary<string, string> Aliases = new Dictionary<string, string>();
 
         #endregion
         
         /// <summary>
-        /// Comnstuctor to create the container of the options
+        /// Constructor to create the container of the options
         /// </summary>
         /// <remarks>
         /// Adds the global options that apply across all commands
@@ -43,7 +34,7 @@ namespace Delineate.Fast.Commands
         public CommandOptions()
         {
             // Adds the default options for all commands
-            Add(HELP, "Provides help for the requested command");
+            Add("-h", "Provides help for the requested command", aliases: "--help");
         }
 
         /// <summary>
@@ -56,20 +47,25 @@ namespace Delineate.Fast.Commands
         /// <param name="isMandatory">Indicates if the option is mandatory</param>
         /// <param name="alias">Any aliases for the option (e.g.-f, --force)</param>
         public void Add(string key, string description, bool hasValue = false, 
-                        bool isMandatory = false, params string[] alias)
+                        bool isMandatory = false, params string[] aliases)
         {
-
+            
+            // Creates the option 
             CommandOption option = new CommandOption()
             {
+                PrimaryKey = key,
+                Aliases = aliases,
                 Description = description,
                 HasValue = hasValue,
                 IsMandatory = isMandatory,
-                Alias = alias
             };
-
+            
             Options.Add(key, option);
+            Aliases.Add(key, key);
 
-            //TODO: Loop around the alias
+            if(aliases != null)
+                foreach(string alias in aliases)
+                    Aliases.Add(alias, key);
         }
 
         /// <summary>
@@ -83,7 +79,10 @@ namespace Delineate.Fast.Commands
         public CommandOption Get(string key)
         {
             if(Has(key))
-                return Options[key];
+            {
+                string secondaryKey = Aliases[key];
+                return Options[secondaryKey];
+            }
             else
                 return null;
         }
@@ -95,7 +94,7 @@ namespace Delineate.Fast.Commands
         /// <returns>Returns true if the option available</returns>
         public bool Has(string key)
         {
-            return Options.ContainsKey(key);
+            return Aliases.ContainsKey(key);
         }
     }
 }

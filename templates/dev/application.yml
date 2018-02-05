@@ -1,0 +1,39 @@
+version: '3'
+services:
+
+    mgt: # Portainer Container Management
+        image: portainer/portainer
+        container_name: api_mgt
+        ports:
+            - 9000  
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        labels:
+            - "traefik.backend=mgt"
+            - "traefik.frontend.rule=Host:mgt.delineate.io"
+
+
+    rp: # Traefik Reverse Proxy 
+        image: traefik
+        container_name: api_rp
+        command: --web --docker --docker.domain=docker.localhost
+        ports:
+            - 80:80
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - /dev/null:/traefik.toml
+
+
+    app: # Python (Flask) application
+        image: api-app
+        build: ./app
+        ports:
+            - 80
+        labels:
+            - "traefik.backend=api"
+            - "traefik.frontend.rule=Host:api.delineate.io"
+
+
+    db: # Redis Database
+        image: redis:alpine
+        container_name: api_db

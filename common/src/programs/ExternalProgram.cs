@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Delineate.Fast.Commands
+namespace Delineate.Fast.Programs
 {
-    public static class External
+    public static class ExternalProgram
     {
         public static void Run(string program, string[] args)
         {
@@ -26,7 +26,7 @@ namespace Delineate.Fast.Commands
 
             process.Start();
 
-            ExternalResult result = new ExternalResult()
+            ExternalProgramResult result = new ExternalProgramResult()
             {
                 Code = process.ExitCode,
                 Output = process.StandardOutput.ReadToEnd()

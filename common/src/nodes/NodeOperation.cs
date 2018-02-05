@@ -1,11 +1,12 @@
+using System;
 using System.Collections.Generic;
 
-namespace Delineate.Fast.Commands
+namespace Delineate.Fast.Nodes
 { 
     /// <summary>
     /// The Operation to be taken for a node 
     /// </summary>
-    public enum CommandNodeOperation
+    public enum NodeOperation
     {
         None, /// No action to be taken
 

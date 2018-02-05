@@ -23,7 +23,7 @@ namespace Delineate.Fast.Commands
         /// <returns>Returns true if -f is present in the options</returns>
         public bool IsForced
         {
-            get{ return Args.ContainsKey(CommandOptions.FORCE); }
+            get{ return Args.ContainsKey("-f"); }
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace Delineate.Fast.Commands
         /// <returns>Returns true if -h is present in the options</returns>
         public bool IsHelp
         {
-            get { return Args.ContainsKey(CommandOptions.HELP); }
+            get { return Args.ContainsKey("-h"); }
         }
 
         #endregion

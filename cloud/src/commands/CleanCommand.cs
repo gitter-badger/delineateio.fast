@@ -2,8 +2,9 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using Delineate.Fast.Commands;
+using Delineate.Fast.Nodes;
 
-namespace Delineate.Fast.Cloud
+namespace Delineate.Fast.Cloud.Commands
 {
     /// <summary>
     /// Command to clean the current project and remove
@@ -17,27 +18,24 @@ namespace Delineate.Fast.Cloud
         /// <summary>
         /// Add Force command option
         /// </summary>
-        protected override void AddOptions()
-        {
-            Options.Add(CommandOptions.FORCE, "Cleans the current project");
-        }
+        protected override void AddOptions() => Options.Add("-f", "Cleans the current project", aliases: "--force");
 
         /// <summary>
         /// Prepares clean tree based on the current configuration
         /// </summary>
         protected override void Prepare()
         {
-            Root.Add(".fast", operation : CommandNodeOperation.Delete);
+            Root.Add<DirectoryNode>(".fast", operation : NodeOperation.Delete);
             
             if(HasParameter("circleci"))
-                Root.Add(".circleci", operation : CommandNodeOperation.Delete);
+                Root.Add<DirectoryNode>(".circleci", operation : NodeOperation.Delete);
 
             if(HasParameter("github"))
-                Root.Add(".github", operation : CommandNodeOperation.Delete);
+                Root.Add<DirectoryNode>(".github", operation : NodeOperation.Delete);
             
-            Root.Add("dev", operation : CommandNodeOperation.Delete);
-            Root.Add("ops", operation : CommandNodeOperation.Delete);
-            Root.Add("tests", operation : CommandNodeOperation.Delete);
+            Root.Add<DirectoryNode>("dev", operation : NodeOperation.Delete);
+            Root.Add<DirectoryNode>("ops", operation : NodeOperation.Delete);
+            Root.Add<DirectoryNode>("tests", operation : NodeOperation.Delete);
         }
     }
 }

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Resources;
+using Delineate.Fast.Nodes;
 
 namespace Delineate.Fast.Commands
 {
@@ -17,36 +18,31 @@ namespace Delineate.Fast.Commands
         /// The configuration parameters 
         /// </summary>
         /// <returns>Array of the config values</returns>
-        protected string[] Parameters {get; set;} 
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        protected CommandOptions Options { get; set; }
-
+        protected string[] Parameters = new []{"circleci", "github", "docker", "packer", "terraform"};
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        protected CommandArgs Args { get; set; } 
-
+        protected CommandOptions Options = new CommandOptions();
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public CommandArgsParser Parser { get; set; }
+        protected CommandArgs Args = new CommandArgs();
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public CommandArgsParser Parser = new CommandArgsParser();
 
         /// <summary>
         /// Reference to the root node of the plan
         /// </summary>
         /// <returns>The root node of the plan</returns>
-        protected CommandNode Root { get; set; }
-
+        protected RootNode Root = RootNode.Create();
 
         /// <summary>
         /// Indicates if apply can be safely invoked
@@ -55,18 +51,6 @@ namespace Delineate.Fast.Commands
         protected bool CanApply { get; set; }
 
         #endregion
-
-        /// <summary>
-        /// Default constructor for the base command 
-        /// </summary>
-        public Command()
-        {
-            Options = new CommandOptions();
-            Args = new CommandArgs();
-            Parser = new CommandArgsParser();
-            Root = CommandNode.CreateRoot();
-            Parameters = new []{"circleci", "github", "docker", "packer", "terraform"};
-        }
 
         /// <summary>
         /// Executes the current command 
@@ -103,7 +87,7 @@ namespace Delineate.Fast.Commands
         /// <summary>
         /// Can be overriden to add command specific options
         /// </summary>
-        protected virtual void AddOptions(){}
+        protected virtual void AddOptions() { }
 
 
         /// <summary>
@@ -130,22 +114,10 @@ namespace Delineate.Fast.Commands
         {
             List<string> warnings = new List<string>();
 
-            foreach(CommandNode node in Root.Nodes)
-            {
-                if(node.Type == CommandNodeType.File && File.Exists(node.Name))
-                    warnings.Add(node.Name);
-
-                if(node.Type == CommandNodeType.Directory)
-                {
-                    if(Directory.Exists(node.Name))
-                    {
-                        if (Directory.GetFiles(node.Name).Length > 0 || Directory.GetDirectories(node.Name).Length > 0 )
-                            warnings.Add(node.Name);
-                    }
-                }
+            foreach(Node node in Root.Nodes)
+            {   
+                node.Plan(warnings);
             }
-
-            //TODO: Refactor
 
             if(warnings.Count > 0)
             {
@@ -174,52 +146,22 @@ namespace Delineate.Fast.Commands
         protected virtual void Apply()
         {
             ConsoleWriter.WriteLine("Applying ...", blank: 1);   
-            Apply(Root.Nodes, new DirectoryInfo(Environment.CurrentDirectory));
+            Apply(Root.Nodes);
         }
 
         /// <summary>
         /// Recursive method that performs the planned changes
         /// </summary>
         /// <param name="nodes">Nodes to perform the action for</param>
-        /// <param name="directory">The current working directory</param>
         /// <param name="indent">The current indent level of messages</param>
-        private void Apply(List<CommandNode> nodes, DirectoryInfo directory, int indent = 1)
+        private void Apply(List<Node> nodes, int indent = 1)
         {
-
-            //TODO: Refactor
-
             if(nodes != null && nodes.Count > 0)
             {
-                foreach(CommandNode node in nodes)
+                foreach(Node node in nodes)
                 {
-                    switch (node.Type)
-                    {
-                        case CommandNodeType.Root:
-                            break;
-                        case CommandNodeType.File: 
-                            string path = string.Format("{0}{1}{2}", directory.FullName, Path.DirectorySeparatorChar, node.Name);
-                            File.Create(path);
-                            ConsoleWriter.WriteLine(node.Name, ConsoleColor.Green, indent, true);
-                            break;
-                        case CommandNodeType.Directory:
-                            
-                            if (node.Operation == CommandNodeOperation.Create)
-                            {
-                                DirectoryInfo info = directory.CreateSubdirectory(node.Name);
-                                ConsoleWriter.WriteLine(node.Name, ConsoleColor.Green, indent, true);
-                                Apply(node.Nodes, info, indent + 1);
-                            }
-
-                            if(node.Operation == CommandNodeOperation.Delete)
-                            {
-                                ConsoleWriter.WriteLine(node.Name, ConsoleColor.Green, indent, true);
-                                Directory.Delete(node.Name, true);
-                            }
-
-                            break;
-                        default:
-                            break;
-                    }
+                    node.Apply();
+                    Apply(node.Nodes, indent + 1);
                 }
             }
         }

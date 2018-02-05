@@ -12,6 +12,12 @@ namespace Delineate.Fast.Commands
         #region Properties
 
         /// <summary>
+        /// The primary key for the option 
+        /// </summary>
+        /// <returns>Returns the primary switch</returns>
+        public string PrimaryKey { get; set; }
+        
+        /// <summary>
         /// Description of the option, output when the -h, --help 
         /// option is used for the command 
         /// </summary>
@@ -22,7 +28,7 @@ namespace Delineate.Fast.Commands
         /// List of aliases of the option
         /// </summary>
         /// <returns>Returns an unsorted array</returns>
-        public string[] Alias { get; set; }
+        public string[] Aliases { get; set; }
 
         /// <summary>
         /// Indicates if the option must have a value supplied 

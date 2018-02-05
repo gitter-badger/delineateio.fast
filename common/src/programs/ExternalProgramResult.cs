@@ -1,11 +1,11 @@
 using System;
 
-namespace Delineate.Fast.Commands
+namespace Delineate.Fast.Programs
 {
     /// <summary>
     /// Encapulsates the results of the 
     /// </summary>
-    public sealed class ExternalResult
+    public sealed class ExternalProgramResult
     {   
         /// <summary>
         /// The return  code of the external program 

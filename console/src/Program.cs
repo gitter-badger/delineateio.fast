@@ -7,9 +7,9 @@ namespace Delineate.Fast.Console
     {
         static void Main(string[] args)
         {  
-            args = new string[]{"cloud", "init", "-a", "circleci", "-a", "github", "-a", "docker", "-a", "packer", "-a", "terraform"};
+            //args = new string[]{"cloud", "init", "-a", "[circleci, github, docker, packer, terraform]"};
             //args = new string[]{"cloud", "run"};
-            //args = new string[]{"cloud", "clean", "-f"};
+            args = new string[]{"cloud", "clean", "--force"};
             
             ProgramArgs programArgs = new ProgramArgs(args);
 
