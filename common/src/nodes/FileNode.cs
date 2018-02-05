@@ -9,8 +9,10 @@ namespace Delineate.Fast.Nodes
     /// Represents the root node in the command that will
     /// be used during the plan and Apply command methods
     /// </summary>
-    public sealed class FileNode : Node
+    public sealed class FileNode : ActionNode
     {
+        #region Properties 
+
         /// <summary>
         /// Indicates that a template
         /// </summary>
@@ -22,6 +24,8 @@ namespace Delineate.Fast.Nodes
         /// </summary>
         /// <returns>The name of the template</returns>
         public string TemplateName { get; private set; }
+
+        #endregion
 
         /// <summary>
         /// Adds the template to be used
@@ -37,31 +41,38 @@ namespace Delineate.Fast.Nodes
         /// <summary>
         /// Checks to see if the file already exists
         /// </summary>
-        /// <param name="warnings">Collection of current warnings</param>
-        public override void Plan(List<string> warnings)
+        public override bool Plan()
         {
-            if(File.Exists(Name))
-                warnings.Add(Name);
+            switch(this.Operation)
+            {
+                case NodeOperation.Create:
+                    return PlanCreateFile();
+
+                case NodeOperation.Delete:
+                    return PlanDeleteFile();
+
+                default:
+                    throw new ArgumentException();
+            }
         }
 
         /// <summary>
         /// Creates the file as required
         /// </summary>
-        /// <param name="warnings"></param>
         public override void Apply()
         {
             switch(this.Operation)
             {
                 case NodeOperation.Create:
                     if(HasTemplate)
-                        AddFileFromTemplate();
+                        ApplyFileFromTemplate();
                     else
-                         AddEmptyFile();
+                        ApplyEmptyFile();
 
                     break;
 
                 case NodeOperation.Delete:
-                    DeleteFile();
+                    ApplyDeleteFile();
                     break;
 
                 default:    
@@ -69,43 +80,114 @@ namespace Delineate.Fast.Nodes
             }
         }
 
-        private void AddFileFromTemplate()
+        #region Plan Methods
+
+        /// <summary>
+        /// Plans the creation of a file
+        /// </summary>
+        /// <returns>Returns true if the file exists</returns>
+        private bool PlanCreateFile()
         {
-            string from = string.Format("{0}{1}templates{1}standard{1}{2}", 
+            string path = FullPath;
+
+            if(File.Exists(path))
+            {
+                Command.Output(string.Format("File '{0}' will be overwritten", Name), 
+                                ConsoleColor.Red, 
+                                indent: Indent);
+            }
+            else
+            {
+                Command.Output(string.Format("File '{0}' will be created", Name), 
+                                ConsoleColor.White, 
+                                indent: Indent);
+            }
+
+            return File.Exists(path);
+        }
+
+        /// <summary>
+        /// Plans the deletion of a file
+        /// </summary>
+        /// <returns>Returns true if the file exists</returns>
+        private bool PlanDeleteFile()
+        {
+            string path = FullPath;
+
+            if(File.Exists(path))
+            {
+                Command.Output(string.Format("File '{0}' will be deleted", Name), 
+                                ConsoleColor.Red, 
+                                indent: Indent);
+            }
+            else
+            {
+                Command.Output(string.Format("File '{0}' doesn't exist", Name), 
+                                ConsoleColor.White, 
+                                indent: Indent);
+            }
+
+            return File.Exists(path);
+        }
+
+        #endregion
+
+        #region Apply Methods
+
+        /// <summary>
+        /// Adds a file from a template
+        /// </summary>
+        private void ApplyFileFromTemplate()
+        {
+            //TODO: Remove the template dir hard coding
+
+            string from = string.Format("{0}{1}templates{1}dev{1}{2}", 
                                         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), 
                                         Path.DirectorySeparatorChar, 
                                         TemplateName);
 
-            string to = string.Format("{0}{1}{2}", 
-                                        WorkingDirectory.FullName, 
-                                        Path.DirectorySeparatorChar, 
-                                        Name);
+            File.Copy(from, FullPath);
 
-            File.Copy(from, to);
+            Command.Output(string.Format("File '{0}' created from '{1}'", Name, TemplateName), 
+                                ConsoleColor.Green, 
+                                indent: Indent);
         }
 
         /// <summary>
         /// Adds an empty file
         /// </summary>
-        private void AddEmptyFile()
+        private void ApplyEmptyFile()
         {
-            string path = string.Format("{0}{1}{2}", 
-                                        WorkingDirectory.FullName, 
-                                        Path.DirectorySeparatorChar, 
-                                        Name);
+            File.Create(FullPath);
 
-            File.Create(path);
+            Command.Output(string.Format("File '{0}' created", Name), 
+                                ConsoleColor.Green, 
+                                indent: Indent);
         }
 
-        private void DeleteFile()
+        /// <summary>
+        /// Deletes a particular file 
+        /// </summary>
+        private void ApplyDeleteFile()
         {
-                            
-            string path = string.Format("{0}{1}{2}", 
+            File.Delete(FullPath);
+
+            Command.Output(string.Format("File '{0}' deleted", Name, TemplateName), 
+                                ConsoleColor.Green, 
+                                indent: Indent);
+        }
+
+        #endregion
+
+        private string FullPath
+        {
+            get
+            {
+                return string.Format("{0}{1}{2}", 
                                 WorkingDirectory.FullName, 
                                 Path.DirectorySeparatorChar, 
-                                Name);
-            
-            File.Delete(path);
+                                Name); 
+            }
         }
     }
 }

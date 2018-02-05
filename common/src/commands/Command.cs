@@ -7,11 +7,15 @@ using Delineate.Fast.Nodes;
 
 namespace Delineate.Fast.Commands
 {
+    public delegate void OutputEventHandler(object sender, OutputEventArgs e);
+
     /// <summary>
     /// Base class for all the commmands for Fast
     /// </summary>
     public abstract class Command
     {
+        public event OutputEventHandler OnOutput;
+
         #region Properties
 
         /// <summary>
@@ -42,7 +46,8 @@ namespace Delineate.Fast.Commands
         /// Reference to the root node of the plan
         /// </summary>
         /// <returns>The root node of the plan</returns>
-        protected RootNode Root = RootNode.Create();
+        protected RootNode Root {get; set;}
+
 
         /// <summary>
         /// Indicates if apply can be safely invoked
@@ -51,6 +56,40 @@ namespace Delineate.Fast.Commands
         protected bool CanApply { get; set; }
 
         #endregion
+
+        public Command()
+        {
+            Root = RootNode.Create(this);
+        }
+
+        public void Output(string line, ConsoleColor color = ConsoleColor.White, 
+                                            int blanks = 0, int indent = 0)
+        {
+            
+            List<string> lines = new List<string>();
+            lines.Add(line);
+            Output(lines, color, blanks, indent);
+        }
+
+        public void Output(IList<string> lines, ConsoleColor color = ConsoleColor.White, 
+                                            int blanks = 0, int indent = 0)
+        {
+
+            OutputEventHandler handler = OnOutput; 
+            OutputEventArgs e = new OutputEventArgs()
+            {
+                Lines = lines,
+                Color = color,
+                Blanks = blanks,
+                Indent = indent 
+            };
+                
+            if (handler != null) 
+            { 
+                // Invokes the delegates. 
+                handler(this, e); 
+            }
+        }
 
         /// <summary>
         /// Executes the current command 
@@ -93,8 +132,8 @@ namespace Delineate.Fast.Commands
         /// <summary>
         /// Helper method to indicate if a specific parameter is set 
         /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
+        /// <param name="key">The key for the parameter</param>
+        /// <returns>Returns true if the parameter exists</returns>
         protected bool HasParameter(string key)
         {
             return Parameters.Contains(key);
@@ -112,31 +151,44 @@ namespace Delineate.Fast.Commands
         /// </summary>
         protected virtual void Plan() 
         {
-            List<string> warnings = new List<string>();
-
-            foreach(Node node in Root.Nodes)
-            {   
-                node.Plan(warnings);
-            }
-
-            if(warnings.Count > 0)
+            Output("Planning ...", blanks: 1);
+            CanApply = true;
+            
+            Plan(Root.Nodes);
+            
+            if( ! CanApply )
             {
-                ConsoleWriter.WriteLine("Planning ...");
-                ConsoleWriter.WriteLines(warnings, ConsoleColor.Yellow, 1, true);
-
-                if(Args.IsForced)
+                if( Args.IsForced )
                 {
-                    ConsoleWriter.WriteLine("Warnings have been overriden", blank: 1);
+                    Output("Warnings have been overriden", 
+                            ConsoleColor.Green, 1);
+
                     CanApply = true;
-                }    
+                }
                 else
                 {
-                    ConsoleWriter.WriteLine("Commmand could not be completed.  Please review the warnings.", ConsoleColor.Red, blank: 1);
+                    Output("Commmand could not be completed.  Please review the warnings.", 
+                            ConsoleColor.Red, 1);
                 }
             }
-            else
+        }
+
+        /// <summary>
+        /// Recursive method that plans the changes
+        /// </summary>
+        /// <param name="nodes">Nodes to perform the action for</param>
+        /// <param name="indent">The current indent level of messages</param>
+        private void Plan(List<Node> nodes, int indent = 0)
+        {
+            if(nodes != null && nodes.Count > 0)
             {
-                CanApply = true;
+                foreach(ActionNode node in nodes)
+                {
+                    if( node.Plan() )
+                        CanApply = false;
+
+                    Plan(node.Nodes, indent + 1);
+                }
             }
         }
 
@@ -145,20 +197,21 @@ namespace Delineate.Fast.Commands
         /// </summary>
         protected virtual void Apply()
         {
-            ConsoleWriter.WriteLine("Applying ...", blank: 1);   
+            Output("Applying ...", blanks: 1);   
+            
             Apply(Root.Nodes);
         }
 
         /// <summary>
-        /// Recursive method that performs the planned changes
+        /// Recursive method that applies the changes
         /// </summary>
         /// <param name="nodes">Nodes to perform the action for</param>
         /// <param name="indent">The current indent level of messages</param>
-        private void Apply(List<Node> nodes, int indent = 1)
+        private void Apply(List<Node> nodes, int indent = 0)
         {
             if(nodes != null && nodes.Count > 0)
             {
-                foreach(Node node in nodes)
+                foreach(ActionNode node in nodes)
                 {
                     node.Apply();
                     Apply(node.Nodes, indent + 1);

@@ -21,8 +21,8 @@ namespace Delineate.Fast.Cloud.Commands
             if(HasParameter("circleci"))
             {
                 DirectoryNode circleDir = Root.Add<DirectoryNode>(".circleci");
-                circleDir.Add<FileNode>("config.yml")
-                        .AddTemplate("circleci.yml");
+                FileNode file = circleDir.Add<FileNode>("config.yml");
+                file.AddTemplate("circleci.yml");
             }
 
             if(HasParameter("github"))
@@ -32,8 +32,8 @@ namespace Delineate.Fast.Cloud.Commands
             devDir.Add<DirectoryNode>("tests");
             if(HasParameter("docker"))
             {
-                devDir.Add<FileNode>("docker-compose.yaml")
-                        .AddTemplate("application.yml");
+                FileNode file = devDir.Add<FileNode>("docker-compose.yaml");
+                file.AddTemplate("application.yml");
             }
 
             DirectoryNode opsDir = Root.Add<DirectoryNode>("ops");

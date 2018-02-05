@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using Delineate.Fast.Commands;
 
 namespace Delineate.Fast.Nodes
 {
@@ -24,27 +25,14 @@ namespace Delineate.Fast.Nodes
         /// when a command is being prepared for execution 
         /// </summary>
         /// <returns></returns>    
-        public static RootNode Create()
+        public static RootNode Create(Command command)
         {
             return new RootNode()
             {
                 Name = ROOT,
-                Operation = NodeOperation.None,
+                Command = command,
                 WorkingDirectory = new DirectoryInfo(Environment.CurrentDirectory)
             };
         }
-        
-        /// <summary>
-        /// Null implementation of Plan 
-        /// </summary>
-        /// <param name="warnings">The collection of warnings</param>
-        public override void Plan(List<string> warnings){}
-
-        /// <summary>
-        /// Null implementation of Apply
-        /// </summary>
-        /// <param name="warnings">The collection of warnings</param>
-        public override void Apply(){} 
-
     }
 }

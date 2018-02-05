@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Delineate.Fast.Commands;
 
-namespace Delineate.Fast.Console
+namespace Delineate.Fast
 {
     /// <summary>
     /// Wrapper class for the program arguments

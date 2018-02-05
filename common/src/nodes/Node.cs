@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-
+using Delineate.Fast.Commands;
 
 namespace Delineate.Fast.Nodes
 {
@@ -23,17 +23,22 @@ namespace Delineate.Fast.Nodes
         public Node Parent { get; private set; }
 
         /// <summary>
+        /// The Command that created the node
+        /// </summary>
+        /// <returns>Returns the command</returns>
+        public Command Command { get; set; }
+
+        /// <summary>
         /// Name to be used for node
         /// </summary>
         /// <returns>Returns the name of the node</returns>
         public string Name { get; set; }
 
         /// <summary>
-        /// The Operation to be carried out during the innovation of 
-        /// the Plan and Apply Command methods 
+        /// Indent of the action to be taken
         /// </summary>
         /// <returns></returns>
-        public NodeOperation Operation { get; set; }
+        public int Indent { get; set; }
 
         /// <summary>
         /// Collection of any child nodes
@@ -42,7 +47,7 @@ namespace Delineate.Fast.Nodes
         /// Returns an unsorted list of any child nodes, if there
         /// are n o nodes then null if returned
         /// </returns>
-        public List<Node> Nodes { get; private set; }
+        public List<Node> Nodes { get; set; }
 
         /// <summary>
         /// Return the current directory
@@ -57,7 +62,7 @@ namespace Delineate.Fast.Nodes
         /// <param name="name">Name of the node to be added</param>
         /// <param name="operation">The operation for the node added</param>
         /// <returns>The newly added node</returns>
-        public T Add<T>(string name, NodeOperation operation = NodeOperation.Create) where T: Node, new()
+        public T Add<T>(string name, NodeOperation operation = NodeOperation.Create) where T: ActionNode, new()
         {
             if(Nodes == null)
                 Nodes = new List<Node>();
@@ -67,7 +72,9 @@ namespace Delineate.Fast.Nodes
                 Name = name,
                 Operation = operation,
                 WorkingDirectory = GetWorkingDirectory<T>(name),
-                Parent = this
+                Parent = this,
+                Command = this.Command,
+                Indent = this.Indent + 1
             };
 
             Nodes.Add(node);
@@ -96,16 +103,5 @@ namespace Delineate.Fast.Nodes
                 return WorkingDirectory;
             }
         }
-
-        /// <summary>
-        /// Implements the APln for the node type
-        /// </summary>
-        /// <param name="warnings">The collection of warnings</param>
-        public abstract void Plan(List<string> warnings);
-
-        /// <summary>
-        /// Implements the Apply for the node type
-        /// </summary>
-        public abstract void Apply();
     }
 }

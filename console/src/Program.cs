@@ -1,15 +1,15 @@
 ﻿using System;
 using Delineate.Fast.Commands;
 
-namespace Delineate.Fast.Console
+namespace Delineate.Fast
 {
     class Program
     {
         static void Main(string[] args)
         {  
-            //args = new string[]{"cloud", "init", "-a", "[circleci, github, docker, packer, terraform]"};
-            //args = new string[]{"cloud", "run"};
-            args = new string[]{"cloud", "clean", "--force"};
+            args = new string[]{"cloud", "init", "-t", "[circleci, github, docker, packer, terraform]"};
+            args = new string[]{"cloud", "run"};
+            args = new string[]{"cloud", "clean", "-f"};
             
             ProgramArgs programArgs = new ProgramArgs(args);
 
@@ -18,17 +18,23 @@ namespace Delineate.Fast.Console
                 try
                 {
                     Command command = CommandFactory.Create(programArgs.Values);
+                    command.OnOutput += new OutputEventHandler(Output);
                     command.Execute( programArgs.Values );
                 }
                 catch (Exception exception)
                 {
-                    ConsoleWriter.WriteLine(exception.Message);
+                    ProgramWriter.Write(exception.Message);
                 }
             }
             else
             {
-                ConsoleWriter.WriteLine("No args provided", ConsoleColor.Red, blank: 1);
+                ProgramWriter.Write("No args provided", ConsoleColor.Red, 1);
             }
+        }
+
+        static void Output(object sender, OutputEventArgs e)
+        {
+            ProgramWriter.Write(e);
         }
     }
 }

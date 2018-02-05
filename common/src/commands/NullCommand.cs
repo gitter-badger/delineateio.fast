@@ -15,7 +15,7 @@ namespace Delineate.Fast.Commands
         /// </summary>
         protected override void Prepare()
         {
-            ConsoleWriter.WriteLine("No matching command was found", ConsoleColor.Red, blank: 1);
+            Output("No matching command was found", ConsoleColor.Red, 1);
         }
 
         #endregion

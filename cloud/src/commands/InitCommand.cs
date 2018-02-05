@@ -34,20 +34,5 @@ namespace Delineate.Fast.Cloud.Commands
         }
 
         #endregion
-
-        #region Plan 
-
-        /// <summary>
-        /// Overrides the base plan to add the instructions for the user
-        /// </summary>
-        protected override void Plan()
-        {
-            base.Plan();
-
-            if(! CanApply )
-                ConsoleWriter.WriteLine("The 'Clean' should be used to ensure a clean environment before calling 'init'");
-        }
-
-        #endregion
     }
 }
