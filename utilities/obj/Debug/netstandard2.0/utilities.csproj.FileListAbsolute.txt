@@ -1,8 +1,0 @@
-/Users/jonathan/Code/delineateio/delineateio.fast/utilities/bin/Debug/netstandard2.0/utilities.deps.json
-/Users/jonathan/Code/delineateio/delineateio.fast/utilities/bin/Debug/netstandard2.0/utilities.dll
-/Users/jonathan/Code/delineateio/delineateio.fast/utilities/bin/Debug/netstandard2.0/utilities.pdb
-/Users/jonathan/Code/delineateio/delineateio.fast/utilities/obj/Debug/netstandard2.0/utilities.csproj.CoreCompileInputs.cache
-/Users/jonathan/Code/delineateio/delineateio.fast/utilities/obj/Debug/netstandard2.0/utilities.AssemblyInfoInputs.cache
-/Users/jonathan/Code/delineateio/delineateio.fast/utilities/obj/Debug/netstandard2.0/utilities.AssemblyInfo.cs
-/Users/jonathan/Code/delineateio/delineateio.fast/utilities/obj/Debug/netstandard2.0/utilities.dll
-/Users/jonathan/Code/delineateio/delineateio.fast/utilities/obj/Debug/netstandard2.0/utilities.pdb
