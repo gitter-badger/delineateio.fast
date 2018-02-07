@@ -1,0 +1,2 @@
+
+tools = [github, circleci, github, docker, packer, terraform]
