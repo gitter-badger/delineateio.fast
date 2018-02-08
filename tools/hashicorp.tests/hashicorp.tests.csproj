@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-
+    <AssemblyName>io.delineate.fast.tools.hashicorp.tests</AssemblyName>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 

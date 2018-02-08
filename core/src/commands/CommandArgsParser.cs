@@ -69,12 +69,12 @@ namespace Delineate.Fast.Core.Commands
 
                         if(option.HasValue)
                         {
-                            args.Add(option.PrimaryKey, programArgs[ i + 1]);
+                            args.Add(option.Key, programArgs[ i + 1]);
                             i++;
                         }
                         else
                         {
-                            args.Add(option.PrimaryKey);
+                            args.Add(option.Key);
                         }
                     }
                 }

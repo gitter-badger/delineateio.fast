@@ -16,7 +16,7 @@ namespace Delineate.Fast.Core.Commands
         /// The primary key for the option 
         /// </summary>
         /// <returns>Returns the primary switch</returns>
-        public string PrimaryKey { get; set; }
+        public string Key { get; set; }
         
         /// <summary>
         /// Description of the option, output when the -h, --help 

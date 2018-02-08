@@ -59,7 +59,7 @@ namespace Delineate.Fast.Core.Nodes
             if(WorkingDirectory.Exists)
             {
                 Command.Output(string.Format("Directory '{0}' exists", Name), 
-                                ConsoleColor.Yellow, 
+                                ConsoleColor.White, 
                                 indent: Indent);
             }
             else
@@ -81,7 +81,7 @@ namespace Delineate.Fast.Core.Nodes
             if(WorkingDirectory.Exists)
             {
                 Command.Output(string.Format("Directory '{0}' will be deleted", Name), 
-                                ConsoleColor.Red, 
+                                ConsoleColor.Yellow, 
                                 indent: Indent);
             }
             else

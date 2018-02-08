@@ -5,6 +5,7 @@
   </ItemGroup>
 
   <PropertyGroup>
+    <AssemblyName>io.delineate.fast.templates.local</AssemblyName>
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 

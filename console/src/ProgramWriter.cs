@@ -45,9 +45,9 @@ namespace Delineate.Fast
                 for(int i = 0; i < indent; i++)
                 {
                     if( i == indent -1 )
-                        builder.Append("  - ");
+                        builder.Append(" - ");
                     else
-                        builder.Append("    ");
+                        builder.Append("   ");
                 }
 
                 builder.Append(line.ToString() + Environment.NewLine);

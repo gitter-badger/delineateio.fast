@@ -12,7 +12,7 @@ namespace Delineate.Fast.Core.Commands
     /// <summary>
     /// Base class for all the commmands for Fast
     /// </summary>
-    [CommandOption(PrimaryKey="-h", Description="Provides help for the requested command", Aliases="--help")]
+    [CommandOption(Key="-h", Description="Provides help for the requested command", Aliases="--help")]
     public abstract class Command
     {
         public event OutputEventHandler OnOutput;
@@ -23,7 +23,7 @@ namespace Delineate.Fast.Core.Commands
         /// 
         /// </summary>
         /// <returns></returns>
-        protected CommandOptions Options = new CommandOptions();
+        internal CommandOptions Options = new CommandOptions();
 
         /// <summary>
         /// 
@@ -95,6 +95,8 @@ namespace Delineate.Fast.Core.Commands
 
             if( Parser.HasErrors)
             {
+                //TODO : Further information can be provided here
+                Output("There was an error parsing the provided arguments", ConsoleColor.Red, 1, 1);
                 Help();
             }
             else
@@ -127,6 +129,9 @@ namespace Delineate.Fast.Core.Commands
         protected virtual void Plan() 
         {
             Output("Planning ...", blanks: 1);
+            Output(Root.Path, ConsoleColor.Magenta);
+            Output("");
+
             CanApply = true;
             
             Plan(Root.Nodes);
@@ -171,9 +176,10 @@ namespace Delineate.Fast.Core.Commands
         /// Applies the command, only called if CanApply = true
         /// </summary>
         protected virtual void Apply()
-        {
-            Output("Applying ...", blanks: 1);   
-            
+        {   
+            Output("Applying ...", blanks: 1);
+            Output(Root.Path, ConsoleColor.DarkMagenta);
+            Output("");
             Apply(Root.Nodes);
         }
 

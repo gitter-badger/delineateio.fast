@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Delineate.Fast.Utilities;
+using Delineate.Fast.Core;
 using Delineate.Fast.Tests;
 
 namespace Delineate.Fast.Utilities.Tests
@@ -27,7 +27,7 @@ namespace Delineate.Fast.Utilities.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void NoFileProvided()
         { 
-            CompressionManager.Decompress(null);
+            Utils.Decompress(null);
         }
 
         [TestMethod]
@@ -36,7 +36,7 @@ namespace Delineate.Fast.Utilities.Tests
         {
             FileInfo file = new FileInfo(Path.Combine(Source, "none.zip"));
  
-            CompressionManager.Decompress(file);
+            Utils.Decompress(file);
         }
 
         [TestMethod]
@@ -45,14 +45,14 @@ namespace Delineate.Fast.Utilities.Tests
         {
             FileInfo file = new FileInfo(Path.Combine(Source, "not_ok.zip"));
 
-            CompressionManager.Decompress(file);
+            Utils.Decompress(file);
         }
 
         [TestMethod]
         public void Decompress()
         {   
             FileInfo file = new FileInfo(Path.Combine(Source, "ok.zip"));
-            CompressionManager.Decompress(file);
+            Utils.Decompress(file);
         }
     }
 }

@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Delineate.Fast.Tests;
-using Delineate.Fast.Utilities;
+using Delineate.Fast.Core;
 
 namespace Delineate.Fast.Utilities.Tests
 {
@@ -32,7 +32,7 @@ namespace Delineate.Fast.Utilities.Tests
             string path = Path.Combine(Source, "download.zip");
             
             FileInfo file = new FileInfo(path);   
-            DownloadManager.Download(null, file);
+            Utils.Download(null, file);
         }
 
         [TestMethod]
@@ -41,7 +41,7 @@ namespace Delineate.Fast.Utilities.Tests
         {
             Uri url = new Uri(TEST_URL);  
 
-            DownloadManager.Download(url, null);
+            Utils.Download(url, null);
         }
 
         [TestMethod]
@@ -51,7 +51,7 @@ namespace Delineate.Fast.Utilities.Tests
             string path = Path.Combine(Source, "download.zip");
 
             FileInfo file = new FileInfo(path); 
-            DownloadManager.Download(url, file);
+            Utils.Download(url, file);
         }
     }
 }

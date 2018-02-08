@@ -28,32 +28,15 @@ namespace Delineate.Fast.Core.Commands
         /// <summary>
         /// Adds an option to the collection
         /// </summary>
-        /// <param name="key">The key of the option</param>
-        /// <param name="description">A description for the option</param>
-        /// <param name="type">The type of the option (global, command specific)</param>
-        /// <param name="hasValue">Indicates if the option requires a value</param>
-        /// <param name="isMandatory">Indicates if the option is mandatory</param>
-        /// <param name="alias">Any aliases for the option (e.g.-f, --force)</param>
-        public void Add(string key, string description, bool hasValue = false, 
-                        bool isMandatory = false, string aliases = "")
-        {
-            
-            // Creates the option 
-            CommandOption option = new CommandOption()
-            {
-                PrimaryKey = key,
-                Aliases = aliases,
-                Description = description,
-                HasValue = hasValue,
-                IsMandatory = isMandatory,
-            };
-            
-            Options.Add(key, option);
-            Aliases.Add(key, key);
+        /// <param name="option">The option to add</param>
+        public void Add(CommandOption option)
+        {            
+            Options.Add(option.Key, option);
+            Aliases.Add(option.Key, option.Key);
 
-            if(aliases != null && aliases.Length > 0)
-                foreach(string alias in aliases.Split(","))
-                    Aliases.Add(alias, key);
+            if(option.Aliases != null && option.Aliases.Length > 0)
+                foreach(string alias in option.Aliases.Split(","))
+                    Aliases.Add(alias, option.Key);
         }
 
         /// <summary>

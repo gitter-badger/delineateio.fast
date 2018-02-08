@@ -1,7 +1,9 @@
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Delineate.Fast.Core.Processes;
 
 namespace Delineate.Fast.Core.Tools
 {
@@ -24,7 +26,40 @@ namespace Delineate.Fast.Core.Tools
         /// <returns></returns>
         public string Version { get; set; }
 
+        public List<string> AllVersions
+        {
+            get
+            {
+                return GetAllVersions();
+            }
+        }
+
         #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Constructor that all tools must confirm to
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="version"></param>
+        public Tool(string name, string version)
+        {   
+            //TODO : Additional harding required for Name parameter 
+
+            if(version == null)
+                throw new ArgumentNullException();
+
+            if(version.Length == 0)
+                throw new ArgumentException();
+
+            Name = name;
+            Version = version;
+        }
+
+        #endregion
+
+        #region Abstract Methods
 
         /// <summary>
         /// Gets the active version for the tool
@@ -41,22 +76,27 @@ namespace Delineate.Fast.Core.Tools
         /// <summary>
         /// Performs the install of the tool
         /// </summary>
-        /// <param name="version">The version of the tool to be installed</param>
-        public abstract void Install(string version);
-
-        /// <summary>
-        /// Uninstalls the specified version of the product
-        /// </summary>
-        /// <param name="version">The version to be uninstalled</param>
-        public abstract void Uninstall(string version);
+        /// <param name="activate">Switch to this version after installation</param>
+        public abstract void Install(bool activate = false);
 
         /// <summary>
         /// Switches to a particular version 
         /// </summary>
-        /// <param name="version"></param>
-        public abstract void SwitchTo(string version);
+        public abstract void Activate();
 
-        #region Generic Run Method
+        /// <summary>
+        /// Uninstalls the specified version of the product
+        /// </summary>
+        public abstract void Uninstall();
+
+        /// <summary>
+        /// Uninstalls all version of the tool
+        /// </summary>
+        public abstract void UninstallAll();
+
+        #endregion
+
+        #region Run Method
 
         /// <summary>
         /// Runs a command using the tool
@@ -64,37 +104,54 @@ namespace Delineate.Fast.Core.Tools
         /// <param name="args">Arguments for the tool</param>
         protected ToolResult Run(params string[] args)
         {
-            if(Name == null || Name.Length == 0)
-                throw new ArgumentException("No tool has been specified");
+            return new ToolResult( ProcessManager.Execute(Name, args) );
+        }
 
-            var cmd = string.Join(" ", args);
-            var escapedArgs = cmd.Replace("\"", "\\\"");
-            
-            using(Process process = new Process())
-            {
-                process.StartInfo = new ProcessStartInfo()
-                {
-                    FileName = Name,
-                    Arguments = escapedArgs,
-                    // Arguments = $"-c \"{escapedArgs}\"",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
+        #endregion
 
-                process.Start();
-                process.WaitForExit();
+        #region Directory Methods
 
-                ToolResult result = new ToolResult()
-                {
-                    HasError = process.ExitCode > 0,
-                    StandardOutput = process.StandardOutput.ReadToEnd(),
-                    StandardError = process.StandardError.ReadToEnd(),
-                };
-                
-                return result;
-            }
+        /// <summary>
+        /// Returns the software path for the machine where runnning
+        /// </summary>
+        /// <returns>The software name where running</returns>
+        protected DirectoryInfo GetSoftwareDirectory()
+        {
+            //TODO: Need to make sure this platform aware
+
+            string home = Environment.GetEnvironmentVariable("HOME");
+            return new DirectoryInfo(Path.Combine(home, "software")); 
+        }
+
+        /// <summary>
+        /// Returns the directory for a specific tool
+        /// </summary>
+        /// <returns>Returns a reference to the doirectory</returns> 
+        protected DirectoryInfo GetToolDirectory()
+        {
+            string path = Path.Combine(GetSoftwareDirectory().FullName, Name);
+            return new DirectoryInfo(path); 
+        }
+
+        /// <summary>
+        /// Returns the directory where the version is stored
+        /// </summary>
+        /// <returns>Returns a reference to the doirectory</returns>        
+        protected DirectoryInfo GetVersionDirectory()
+        {
+            string path = Path.Combine(GetToolDirectory().FullName, Version);
+            return new DirectoryInfo(path); 
+        }
+
+        /// <summary>
+        /// Returns the directory where the executable is required 
+        /// to be to run - differes by platform
+        /// </summary>
+        /// <returns></returns>        
+        protected DirectoryInfo GetExecutableDirectory()
+        {
+            //TODO : Make this platform aware
+            return new DirectoryInfo("/usr/local/bin");
         }
 
         #endregion

@@ -94,7 +94,7 @@ namespace Delineate.Fast.Core.Nodes
             if(File.Exists(path))
             {
                 Command.Output(string.Format("File '{0}' will be overwritten", Name), 
-                                ConsoleColor.Red, 
+                                ConsoleColor.Yellow, 
                                 indent: Indent);
             }
             else
@@ -118,7 +118,7 @@ namespace Delineate.Fast.Core.Nodes
             if(File.Exists(path))
             {
                 Command.Output(string.Format("File '{0}' will be deleted", Name), 
-                                ConsoleColor.Red, 
+                                ConsoleColor.Yellow, 
                                 indent: Indent);
             }
             else
@@ -140,13 +140,9 @@ namespace Delineate.Fast.Core.Nodes
         /// </summary>
         private void ApplyFileFromTemplate()
         {
-            //TODO: Remove the template dir hard coding
-            string templateName = Command.Args.GetFirst("-t");
-            
-            string from = string.Format("{0}{1}templates{1}{2}{1}files{1}{3}", 
-                                        Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), 
-                                        Path.DirectorySeparatorChar, 
-                                        templateName,
+            string from = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), 
+                                        "templates",
+                                        "local",
                                         TemplateFileName);
 
             File.Copy(from, FullPath);

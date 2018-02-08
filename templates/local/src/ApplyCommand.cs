@@ -7,9 +7,9 @@ namespace Delineate.Fast.Templates.Local
     /// <summary>
     /// Setup command that is used to create the project artefacts 
     /// </summary>
-    [CommandMatch(Key="local:init")]
-    [CommandOption(PrimaryKey="-t", Description="Template to use during initialisation", HasValue=true, Aliases="--template")]
-    public sealed class InitCommand : Command
+    [CommandMatch(Key="local:apply")]
+    [CommandOption(Key="-t", Description="Applys the local template", HasValue=true, Aliases="--template")]
+    public sealed class ApplyCommand : Command
     {
         #region Prepare
 
@@ -19,13 +19,9 @@ namespace Delineate.Fast.Templates.Local
         /// </summary>
         protected override void Prepare()
         {
-            DirectoryNode fastDir = Root.Add<DirectoryNode>(".fast");
-            fastDir.Add<FileNode>("config.yml");
-
             DirectoryNode circleDir = Root.Add<DirectoryNode>(".circleci");
             FileNode circleFile = circleDir.Add<FileNode>("config.yml");
             circleFile.AddTemplate("circleci.yml");
-
             
             Root.Add<DirectoryNode>(".github");
             

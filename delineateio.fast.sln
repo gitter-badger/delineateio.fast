@@ -3,17 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cli", "drivers\cli\cli.csproj", "{B40CA193-AF08-4ADF-9E98-7DBDA52A7B86}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "console", "console\console.csproj", "{B40CA193-AF08-4ADF-9E98-7DBDA52A7B86}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "local", "templates\local\local.csproj", "{5438D26D-D0AE-4CB1-8882-2ADE41C69EDE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "core", "core\core.csproj", "{33160142-32F2-40BF-9C5E-37305B965E5C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "core.tests", "core.tests\core.tests.csproj", "{C9D2291F-FD27-4E6F-9AC7-28A24458D8F3}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hashicorp", "tools\hashicorp\hashicorp.csproj", "{E0E18BA2-D30A-48B3-BD88-E82E7A5AE95A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "utilities", "utilities\utilities.csproj", "{05C7EA93-39CC-4473-9F3A-20EEAA86AE16}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "utilities.tests", "utilities.tests\utilities.tests.csproj", "{C9D2291F-FD27-4E6F-9AC7-28A24458D8F3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{474627F6-6099-4423-BE9F-E68355B45428}"
 EndProject

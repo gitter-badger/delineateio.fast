@@ -48,36 +48,79 @@ namespace Delineate.Fast.Core.Commands
                     commandType = Commands[match];
             } 
 
-            return Activator.CreateInstance(commandType) as Command;
+            Command command = Activator.CreateInstance(commandType) as Command;
+
+            LoadCommandOptions(command);
+
+            return command;
+        }
+
+        private static void LoadCommandOptions(Command command)
+        {
+            var attributes = command.GetType().GetCustomAttributes(typeof(CommandOption));
+            if (attributes != null)
+            {
+                foreach(CommandOption option in attributes)
+                {   
+                    command.Options.Add(option);
+                }
+            }
+        }
+
+        private static DirectoryInfo GetTemplatesDirectory()
+        {
+            string path = string.Format("{0}{1}{2}",
+                                Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                                Path.DirectorySeparatorChar,
+                                "templates");
+
+            return new DirectoryInfo(path);
         }
 
         /// <summary>
         /// Loads the commands collection if required 
         /// </summary>
         /// <returns>Returns a colelction keyed to be matched against the program args</returns>
-        private static void  LoadCommands()
+        private static void LoadCommands()
         {
-            string path = string.Format("{0}{1}{2}",
-                                            Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                                            Path.DirectorySeparatorChar,
-                                            "commands");
+            // Loads any command from Core
+            LoadAssemblyCommands(Assembly.GetAssembly(typeof(CommandFactory)));
 
-            foreach(string file in Directory.GetFiles(path, "*.dll"))
+            DirectoryInfo[] templates = GetTemplatesDirectory().GetDirectories();
+
+            foreach(DirectoryInfo template in templates)
             {
-                Assembly assembly = Assembly.LoadFile(file);
-
-                foreach (Type type in assembly.GetTypes())
+                foreach(FileInfo file in template.GetFiles("*.dll"))
                 {
-                    var attributes = type.GetCustomAttributes(typeof(CommandMatch));
-                    if (attributes != null)
-                    {
-                        foreach(CommandMatch attribute in attributes)
-                        {   
-                            Commands.Add(attribute.Key, type);
-                        }
+                    LoadAssemblyCommands(Assembly.LoadFile(file.FullName));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Loads the command for a given 
+        /// </summary>
+        /// <param name="assembly"></param>
+        private static void LoadAssemblyCommands(Assembly assembly)
+        {
+            foreach (Type type in assembly.GetTypes())
+            {
+                var attributes = type.GetCustomAttributes(typeof(CommandMatch));
+                if (attributes != null)
+                {
+                    foreach(CommandMatch attribute in attributes)
+                    {   
+                        Commands.Add(attribute.Key, type);
                     }
                 }
             }
+        }
+
+        public static SortedDictionary<string, Type> ReloadTemplates()
+        {
+            Commands.Clear();
+            LoadCommands();
+            return Commands;
         }
     }
 }

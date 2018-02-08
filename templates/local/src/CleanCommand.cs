@@ -13,7 +13,7 @@ namespace Delineate.Fast.Templates.Local
     /// The -f option can be used to force the clean
     /// </remarks>
     [CommandMatch(Key="local:clean")]
-    [CommandOption(PrimaryKey="-f", Description="Cleans the current project", Aliases="--force")]
+    [CommandOption(Key="-f", Description="Cleans the current project", Aliases="--force")]
     public sealed class CleanCommand : Command
     {
         /// <summary>

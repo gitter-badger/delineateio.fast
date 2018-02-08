@@ -1,4 +1,5 @@
 using System;
+using Delineate.Fast.Core.Processes;
 
 namespace Delineate.Fast.Core.Tools
 {
@@ -11,18 +12,22 @@ namespace Delineate.Fast.Core.Tools
         /// Indicates if the result has an error
         /// </summary>
         /// <returns>Return true if an error</returns>
-        public bool HasError { get; set; }
+        public bool HasError { get; private set; }
 
         /// <summary>
         /// The standard output from the external program 
         /// </summary>
         /// <returns>The full output</returns>
-        public string StandardOutput { get; set; }
+        public string Output { get; private set; }
 
         /// <summary>
-        /// The standard error from the external program 
+        /// Creates a tool result
         /// </summary>
-        /// <returns>The full error</returns>
-        public string StandardError { get; set; }
+        /// <param name="result">Process result</param>
+        internal ToolResult(ProcessResult result)
+        {
+            HasError = result.HasError;
+            Output = result.Output;
+        }
     }
 }

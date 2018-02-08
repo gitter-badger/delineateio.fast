@@ -15,7 +15,7 @@ namespace Delineate.Fast.Core.Commands
         /// </summary>
         protected override void Plan()
         {
-            Output("No matching command was found", ConsoleColor.Red, 1);
+            Output("No matching command was found", ConsoleColor.Yellow, 1, 1);
         }
 
         #endregion

@@ -34,5 +34,10 @@ namespace Delineate.Fast.Core.Nodes
                 WorkingDirectory = new DirectoryInfo(Environment.CurrentDirectory)
             };
         }
+
+        public string Path
+        {
+            get{ return WorkingDirectory.FullName; }
+        }
     }
 }
