@@ -100,7 +100,7 @@ namespace Delineate.Fast.Tools.Tests
         [TestMethod]
         public void GetVersions()
         {
-            string[] versionInstalls = new string[]{ "0.11.0", "0.11.1", "0.11.2", "0.11.3"} ;
+            string[] versionInstalls = new string[]{"0.11.2", "0.11.3"} ;
 
             foreach(string versionInstall in versionInstalls)
             {
