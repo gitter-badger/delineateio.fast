@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "console", "console\console.csproj", "{B40CA193-AF08-4ADF-9E98-7DBDA52A7B86}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "local", "templates\local\local.csproj", "{5438D26D-D0AE-4CB1-8882-2ADE41C69EDE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "local", "plugins\local\local.csproj", "{5438D26D-D0AE-4CB1-8882-2ADE41C69EDE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "core", "core\core.csproj", "{33160142-32F2-40BF-9C5E-37305B965E5C}"
 EndProject

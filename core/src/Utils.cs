@@ -2,12 +2,37 @@ using System;
 using System.IO;
 using System.Net;
 using System.IO.Compression;
-using Delineate.Fast.Core.Processes;
+using System.Diagnostics;
 
 namespace Delineate.Fast.Core
 { 
     public static class Utils
     {
+        #region Versions
+
+        public static string GetPluginVersion(Type type)
+        {
+            string version = type.Assembly.GetName().Version.ToString();
+            return "Plugin".PadRight(12) + version;
+        }
+
+        public static string GetFastVersion()
+        {
+            string version = typeof(Utils).Assembly.GetName().Version.ToString();
+            return "Fast Engine".PadRight(12) + version;
+        }
+
+        public static string GetDotNetVersion()
+        {
+            string version = Run("dotnet", "--version").Output;
+            version = version.Replace(Environment.NewLine, string.Empty);
+            return ".NET Core".PadRight(12) + version;
+        }
+        
+        #endregion
+
+        #region Download
+
         /// <summary>
         /// Downloads a file via a url
         /// </summary>
@@ -30,6 +55,10 @@ namespace Delineate.Fast.Core
             }
         }
 
+        #endregion
+
+        #region Decompress
+
         /// <summary>
         /// Decompresses a file to the current directory
         /// </summary>
@@ -46,13 +75,67 @@ namespace Delineate.Fast.Core
             }
         }
 
+        #endregion
+
+        #region Process Operations
+
+        /// <summary>
+        /// Runs a command using the tool
+        /// </summary>
+        /// <param name="args">Arguments for the tool</param>
+        public static Result Run(string processName, params string[] args)
+        {
+            if(processName == null || processName.Length == 0)
+                throw new ArgumentException("No process has been specified");
+
+            var cmd = string.Join(" ", args);
+            var escapedArgs = cmd.Replace("\"", "\\\"");
+
+            try
+            {            
+                using(Process process = new Process())
+                {
+                    process.StartInfo = new ProcessStartInfo()
+                    {
+                        FileName = processName,
+                        Arguments = escapedArgs,
+                        RedirectStandardOutput = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    };
+
+                    process.Start();
+                    process.WaitForExit();
+
+                    return new Result()
+                    {
+                        HasError = process.ExitCode > 0,
+                        Output = process.StandardOutput.ReadToEnd(),
+                    };
+                }
+            }
+            catch
+            {
+                return new Result()
+                {
+                    HasError = true,
+                };
+            }
+        }
+
+        #endregion
+
+        #region File Operations
+
         /// <summary>
         /// Make a file executable
         /// </summary>
         /// <param name="file">File to make executable</param>
         public static void MakeExecutable(FileInfo file)
         {
-            ProcessManager.Execute("chmod", "+x", file.FullName);
+            Run("chmod", "+x", file.FullName);
         }
+
+        #endregion
     }   
 }

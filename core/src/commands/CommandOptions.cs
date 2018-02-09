@@ -22,6 +22,12 @@ namespace Delineate.Fast.Core.Commands
         /// <returns></returns>
         private Dictionary<string, string> Aliases = new Dictionary<string, string>();
 
+        /// <summary>
+        /// Returns 
+        /// </summary>
+        /// <returns></returns>
+        public List<CommandOption> Items = new List<CommandOption>();
+
         #endregion
 
         /// <summary>
@@ -32,6 +38,7 @@ namespace Delineate.Fast.Core.Commands
         {            
             Options.Add(option.Key, option);
             Aliases.Add(option.Key, option.Key);
+            Items.Add(option);
 
             if(option.Aliases != null && option.Aliases.Length > 0)
                 foreach(string alias in option.Aliases.Split(","))

@@ -27,6 +27,15 @@ namespace Delineate.Fast.Core.Commands
         }
 
         /// <summary>
+        /// Indicates that it's a version request
+        /// </summary>
+        /// <returns></returns>
+        public bool IsVersion
+        {
+            get{ return Args.ContainsKey("-v"); }
+        }
+
+        /// <summary>
         /// Indicates if help has been requested for the command
         /// </summary>
         /// <returns>Returns true if -h is present in the options</returns>

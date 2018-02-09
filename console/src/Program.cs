@@ -1,5 +1,6 @@
 ﻿using System;
 using Delineate.Fast.Core.Commands;
+using Delineate.Fast.Core.Outputs;
 
 namespace Delineate.Fast
 {
@@ -8,31 +9,20 @@ namespace Delineate.Fast
         static void Main(string[] args)
         {
             if(args.Length == 0)
-                args = new string[]{"local", "clean", "-f"};
+                args = new string[]{"-h"};
 
-            ProgramArgs programArgs = new ProgramArgs(args);
-
-            if(programArgs.HasArgs)
+            try
             {
-                try
-                {
-                    ProgramWriter.Write("Running Fast ...", blanks: 1);
-
-                    Command command = CommandFactory.Create(programArgs.Values);
-                    command.OnOutput += new OutputEventHandler(Output);
-                    command.Execute( programArgs.Values );
-
-                    ProgramWriter.Write("Fast completed!", ConsoleColor.Green, blanks: 1);
-                    ProgramWriter.Write("");
-                }
-                catch (Exception exception)
-                {
-                    ProgramWriter.Write(exception.Message);
-                }
+                Command command = CommandFactory.Create(args );
+                command.Outputs.OnOutput += new OutputEventHandler(Output);
+                command.Execute( args );
+                Environment.Exit(0);
             }
-            else
+            catch (Exception exception)
             {
-                ProgramWriter.Write("No args provided", ConsoleColor.Red, indent: 1);
+                
+                ProgramWriter.WriteException(exception);
+                Environment.Exit(1);
             }
         }
 

@@ -6,7 +6,7 @@ namespace Delineate.Fast.Core.Commands
     /// <summary>
     /// Setup command that is used to create the project artefacts 
     /// </summary>
-    [CommandMatch(Key="init")]
+    [CommandInfo(Key="init", Description="Initializes the fast environment", IsCore=true)]
     public sealed class InitCommand : Command
     {
         #region Prepare

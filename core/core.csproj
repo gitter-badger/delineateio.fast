@@ -3,6 +3,12 @@
   <PropertyGroup>
     <AssemblyName>io.delineate.fast.core</AssemblyName>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <Version>2.0.0.0</Version>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <Company>delineate.io</Company>
+    <Authors>Jonathan Fenwick</Authors>
+    <Product>fast</Product>
+    <Copyright>Copyright © 2018</Copyright>
   </PropertyGroup>
 
 </Project>

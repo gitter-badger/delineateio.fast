@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using Delineate.Fast.Core.Outputs;
 
 namespace Delineate.Fast.Core.Nodes
 {
@@ -58,15 +59,11 @@ namespace Delineate.Fast.Core.Nodes
         {
             if(WorkingDirectory.Exists)
             {
-                Command.Output(string.Format("Directory '{0}' exists", Name), 
-                                ConsoleColor.White, 
-                                indent: Indent);
+                Command.Outputs.SendNormal(string.Format("Directory '{0}' exists", Name));
             }
             else
             {
-                Command.Output(string.Format("Directory '{0}' will be created", Name),
-                                ConsoleColor.White, 
-                                indent: Indent);
+                Command.Outputs.SendNormal(string.Format("Directory '{0}' will be created", Name));
             }
 
             return false;
@@ -80,15 +77,11 @@ namespace Delineate.Fast.Core.Nodes
         {
             if(WorkingDirectory.Exists)
             {
-                Command.Output(string.Format("Directory '{0}' will be deleted", Name), 
-                                ConsoleColor.Yellow, 
-                                indent: Indent);
+                Command.Outputs.SendWarning(string.Format("Directory '{0}' will be deleted", Name));
             }
             else
             {
-                Command.Output(string.Format("Directory '{0}' doesn't exist", Name),
-                                ConsoleColor.White,  
-                                indent: Indent);
+                Command.Outputs.SendNormal(string.Format("Directory '{0}' doesn't exist", Name));
             }
 
             return WorkingDirectory.Exists;
@@ -105,16 +98,12 @@ namespace Delineate.Fast.Core.Nodes
         {
             if(Directory.Exists(WorkingDirectory.FullName))
             {
-                Command.Output(string.Format("Directory '{0}' existed", Name), 
-                                ConsoleColor.White,
-                                indent: Indent);
+                Command.Outputs.SendNormal(string.Format("Directory '{0}' existed", Name));
             }
             else
             {
                 Directory.CreateDirectory(WorkingDirectory.FullName);
-                Command.Output(string.Format("Directory '{0}' created", Name), 
-                                ConsoleColor.Green, 
-                                indent: Indent);
+                Command.Outputs.SendSuccess(string.Format("Directory '{0}' created", Name));
             }
         }
 
@@ -126,15 +115,11 @@ namespace Delineate.Fast.Core.Nodes
             if(Directory.Exists(WorkingDirectory.FullName))
             {
                 Directory.Delete(WorkingDirectory.FullName, true);
-                Command.Output(string.Format("Directory '{0}' deleted", Name), 
-                                ConsoleColor.Green, 
-                                indent: Indent);
+                Command.Outputs.SendSuccess(string.Format("Directory '{0}' deleted", Name));
             }
             else
             {
-                Command.Output(string.Format("Directory '{0}' didn't exist", Name),
-                                ConsoleColor.White,
-                                indent: Indent);
+                Command.Outputs.SendNormal(string.Format("Directory '{0}' didn't exist", Name));
             }
         }
 

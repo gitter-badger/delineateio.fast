@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
 using Delineate.Fast.Core.Commands;
+using Delineate.Fast.Core.Outputs;
 
 namespace Delineate.Fast.Core.Nodes
 {
@@ -93,15 +94,11 @@ namespace Delineate.Fast.Core.Nodes
 
             if(File.Exists(path))
             {
-                Command.Output(string.Format("File '{0}' will be overwritten", Name), 
-                                ConsoleColor.Yellow, 
-                                indent: Indent);
+                Command.Outputs.SendWarning(string.Format("File '{0}' will be overwritten", Name));
             }
             else
             {
-                Command.Output(string.Format("File '{0}' will be created", Name), 
-                                ConsoleColor.White, 
-                                indent: Indent);
+                Command.Outputs.SendNormal(string.Format("File '{0}' will be created", Name));
             }
 
             return File.Exists(path);
@@ -117,15 +114,11 @@ namespace Delineate.Fast.Core.Nodes
 
             if(File.Exists(path))
             {
-                Command.Output(string.Format("File '{0}' will be deleted", Name), 
-                                ConsoleColor.Yellow, 
-                                indent: Indent);
+                Command.Outputs.SendWarning(string.Format("File '{0}' will be deleted", Name));
             }
             else
             {
-                Command.Output(string.Format("File '{0}' doesn't exist", Name), 
-                                ConsoleColor.White, 
-                                indent: Indent);
+                Command.Outputs.SendNormal(string.Format("File '{0}' doesn't exist", Name));
             }
 
             return File.Exists(path);
@@ -140,16 +133,17 @@ namespace Delineate.Fast.Core.Nodes
         /// </summary>
         private void ApplyFileFromTemplate()
         {
+            //TODO: Need to remove the hard coding from HERE!
+
             string from = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), 
-                                        "templates",
+                                        "plugins",
                                         "local",
+                                        "dev",
                                         TemplateFileName);
 
             File.Copy(from, FullPath);
 
-            Command.Output(string.Format("File '{0}' created from '{1}'", Name, TemplateFileName), 
-                                ConsoleColor.Green, 
-                                indent: Indent);
+            Command.Outputs.SendSuccess(string.Format("File '{0}' created from '{1}'", Name, TemplateFileName));
         }
 
         /// <summary>
@@ -159,9 +153,7 @@ namespace Delineate.Fast.Core.Nodes
         {
             File.Create(FullPath);
 
-            Command.Output(string.Format("File '{0}' created", Name), 
-                                ConsoleColor.Green, 
-                                indent: Indent);
+            Command.Outputs.SendSuccess(string.Format("File '{0}' created", Name));
         }
 
         /// <summary>
@@ -171,9 +163,7 @@ namespace Delineate.Fast.Core.Nodes
         {
             File.Delete(FullPath);
 
-            Command.Output(string.Format("File '{0}' deleted", Name, TemplateFileName), 
-                                ConsoleColor.Green, 
-                                indent: Indent);
+            Command.Outputs.SendSuccess(string.Format("File '{0}' deleted", Name, TemplateFileName));
         }
 
         #endregion

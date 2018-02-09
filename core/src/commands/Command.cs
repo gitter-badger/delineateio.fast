@@ -4,35 +4,48 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Resources;
 using Delineate.Fast.Core.Nodes;
+using Delineate.Fast.Core.Outputs;
+using Delineate.Fast.Core.Help;
 
 namespace Delineate.Fast.Core.Commands
 {
-    public delegate void OutputEventHandler(object sender, OutputEventArgs e);
-    
     /// <summary>
     /// Base class for all the commmands for Fast
     /// </summary>
+    [CommandOption(Key="-v", Description="Returns the versions", Aliases="--version")]
     [CommandOption(Key="-h", Description="Provides help for the requested command", Aliases="--help")]
+    [CommandOption(Key="-q", Description="Performs the command in quiet mode, only reporting errors", Aliases="--quiet")]
+    [CommandOption(Key="-l", Description="Indicates that the command should log", Aliases="--log")]
     public abstract class Command
     {
-        public event OutputEventHandler OnOutput;
-
         #region Properties
 
         /// <summary>
-        /// 
+        /// Object containing info about the command
+        /// </summary>
+        /// <returns>The info</returns>
+        public CommandInfo Info { get; set; }
+        
+        /// <summary>
+        /// The Output manager assigned to this command 
         /// </summary>
         /// <returns></returns>
+        public OutputManager Outputs = new OutputManager();
+
+        /// <summary>
+        /// Options that are av available for this command
+        /// </summary>
+        /// <returns>The list of options</returns>
         internal CommandOptions Options = new CommandOptions();
 
         /// <summary>
-        /// 
+        /// The arguments which the command is executing with
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The args</returns>
         public CommandArgs Args = new CommandArgs();
 
         /// <summary>
-        /// 
+        /// Log
         /// </summary>
         /// <returns></returns>
         public CommandArgsParser Parser = new CommandArgsParser();
@@ -47,42 +60,14 @@ namespace Delineate.Fast.Core.Commands
         /// Indicates if apply can be safely invoked
         /// </summary>
         /// <returns>Returns true if the command can be safely applied</returns>
-        protected bool CanApply { get; set; }
+        protected bool IsSafe { get; set; }
 
         #endregion
 
         public Command()
         {
+            //Move to factory
             Root = RootNode.Create(this);
-        }
-
-        public void Output(string line, ConsoleColor color = ConsoleColor.White, 
-                                            int blanks = 0, int indent = 0)
-        {
-            
-            List<string> lines = new List<string>();
-            lines.Add(line);
-            Output(lines, color, blanks, indent);
-        }
-
-        public void Output(IList<string> lines, ConsoleColor color = ConsoleColor.White, 
-                                            int blanks = 0, int indent = 0)
-        {
-
-            OutputEventHandler handler = OnOutput; 
-            OutputEventArgs e = new OutputEventArgs()
-            {
-                Lines = lines,
-                Color = color,
-                Blanks = blanks,
-                Indent = indent 
-            };
-                
-            if (handler != null) 
-            { 
-                // Invokes the delegates. 
-                handler(this, e); 
-            }
         }
 
         /// <summary>
@@ -93,29 +78,88 @@ namespace Delineate.Fast.Core.Commands
         {
             Parser.Parse(programArgs, Options, Args);
 
+            Outputs.IsQuiet = false;
+
+            Outputs.SendBlank();
+            Outputs.SendImportant("Running Fast ...");
+
+
             if( Parser.HasErrors)
             {
-                //TODO : Further information can be provided here
-                Output("There was an error parsing the provided arguments", ConsoleColor.Red, 1, 1);
-                Help();
+                Outputs.SendBlank();
+                Outputs.SendError("There was an error parsing the provided arguments", 1);
+                DisplayHelp();
+                Completed();
+                return;
             }
-            else
+
+            if( Args.IsHelp)
             {
-                Prepare();
-                Plan();
-                if(CanApply)
-                { 
-                    Apply();
-                }
+                DisplayHelp();
+                Completed();
+                return;
+            }
+
+            if( Args.IsVersion)
+            {
+                DisplayVersion();
+                Completed();
+                return;
+            }
+
+            Prepare();
+            Plan();
+
+            if(IsSafe)
+            { 
+                Apply();
+            }
+
+            Completed();
+        }
+
+        private void Completed()
+        {
+            Outputs.SendBlank();
+            Outputs.SendSuccess("Fast completed successfully!");
+            Outputs.SendBlank();
+        }
+
+        internal void DefaultCommandWarning()
+        {
+            if(Info.IsDefault)
+            {
+                Outputs.SendBlank();
+                Outputs.SendWarning("No command was found, information below if for Fast");
             }
         }
 
         /// <summary>
         /// Displays the help section for the current command  
         /// </summary>
-        private void Help()
+        internal void DisplayHelp()
         {
+            DefaultCommandWarning();
+            HelpManager help = new HelpManager(this);
+            help.Output();
+        }
+
+        /// <summary>
+        /// Displays the versions of the engines
+        /// </summary>
+        internal void DisplayVersion()
+        {
+            DefaultCommandWarning();
+
+            Outputs.SendBlank();
+            Outputs.Indent();
+
+            if( ! Info.IsCore)
+                Outputs.SendNormal(Utils.GetPluginVersion(GetType()), false);
             
+            Outputs.SendNormal(Utils.GetFastVersion(), false);
+            Outputs.SendNormal(Utils.GetDotNetVersion(), false);
+            Outputs.Unindent();
         }
 
         /// <summary>
@@ -128,27 +172,28 @@ namespace Delineate.Fast.Core.Commands
         /// </summary>
         protected virtual void Plan() 
         {
-            Output("Planning ...", blanks: 1);
-            Output(Root.Path, ConsoleColor.Magenta);
-            Output("");
+            Outputs.SendBlank();
+            Outputs.SendNormal("Planning ...");
+            Outputs.SendBlank();
 
-            CanApply = true;
+            IsSafe = true;
             
+            Outputs.Indent();
             Plan(Root.Nodes);
-            
-            if( ! CanApply )
+            Outputs.Unindent();
+
+            if( ! IsSafe )
             {
                 if( Args.IsForced )
                 {
-                    Output("Warnings have been overriden", 
-                            ConsoleColor.Green, 1);
-
-                    CanApply = true;
+                    Outputs.SendBlank();
+                    Outputs.SendSuccess("Warnings have been overriden");
+                    IsSafe = true;
                 }
                 else
                 {
-                    Output("Commmand could not be completed.  Please review the warnings.", 
-                            ConsoleColor.Red, 1);
+                    Outputs.SendBlank();
+                    Outputs.SendError("Commmand could not be completed, please review the warnings.", 1);
                 }
             }
         }
@@ -165,9 +210,11 @@ namespace Delineate.Fast.Core.Commands
                 foreach(ActionNode node in nodes)
                 {
                     if( node.Plan() )
-                        CanApply = false;
+                        IsSafe = false;
 
-                    Plan(node.Nodes, indent + 1);
+                    Outputs.Indent();
+                    Plan(node.Nodes);
+                    Outputs.Unindent();
                 }
             }
         }
@@ -177,10 +224,13 @@ namespace Delineate.Fast.Core.Commands
         /// </summary>
         protected virtual void Apply()
         {   
-            Output("Applying ...", blanks: 1);
-            Output(Root.Path, ConsoleColor.DarkMagenta);
-            Output("");
+            Outputs.SendBlank();
+            Outputs.SendNormal("Applying ...");
+            Outputs.SendBlank();
+
+            Outputs.Indent();
             Apply(Root.Nodes);
+            Outputs.Unindent();
         }
 
         /// <summary>
@@ -195,7 +245,10 @@ namespace Delineate.Fast.Core.Commands
                 foreach(ActionNode node in nodes)
                 {
                     node.Apply();
+
+                    Outputs.Indent();
                     Apply(node.Nodes, indent + 1);
+                    Outputs.Unindent();
                 }
             }
         }

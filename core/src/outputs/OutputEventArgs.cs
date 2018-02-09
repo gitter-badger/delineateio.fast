@@ -2,12 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Delineate.Fast.Core.Commands
+namespace Delineate.Fast.Core.Outputs
 {
     /// <summary>
     /// The Command message events args 
     /// </summary>
-    public sealed class OutputEventArgs: EventArgs
+    public class OutputEventArgs: EventArgs
     {
         /// <summary>
         /// Lines of the text 
@@ -19,7 +19,7 @@ namespace Delineate.Fast.Core.Commands
         /// The color to be used when writing out the text
         /// </summary>
         /// <returns></returns>
-        public ConsoleColor Color { get; set; }
+        public OutputLevel Level { get; set; }
 
         /// <summary>
         /// The indent level to use
@@ -27,6 +27,12 @@ namespace Delineate.Fast.Core.Commands
         /// <returns>Returns the indent value</returns>
         public int Indent { get; set; }
 
+        /// <summary>
+        /// Indicates if indent is nested and formats 
+        /// </summary>
+        /// <returns>Returns true if nested</returns>
+        public bool IsNested { get; set; }
+        
         /// <summary>
         /// This is the number of blanks to write
         /// </summary>

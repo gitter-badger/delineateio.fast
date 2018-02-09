@@ -1,11 +1,9 @@
 using System;
 
-namespace Delineate.Fast.Core.Processes
+namespace Delineate.Fast.Core
 {
-    /// <summary>
-    /// Encapulsates the results of the tool
-    /// </summary>
-    public sealed class ProcessResult
+
+    public sealed class Result
     {   
         /// <summary>
         /// Indicates if the result has an error

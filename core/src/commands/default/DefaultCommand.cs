@@ -1,12 +1,14 @@
 using System;
 using System.IO;
+using Delineate.Fast.Core.Outputs;
 
 namespace Delineate.Fast.Core.Commands
 {
     /// <summary>
-    /// Null command is returned if there 
+    /// Default command is returned if there no more relevant command
     /// </summary>
-    public sealed class NullCommand: Command
+    [CommandInfo(Key="", IsDefault=true, IsCore=true)]
+    public sealed class DefaultCommand: Command
     {
         #region Prepare
 
@@ -15,7 +17,7 @@ namespace Delineate.Fast.Core.Commands
         /// </summary>
         protected override void Plan()
         {
-            Output("No matching command was found", ConsoleColor.Yellow, 1, 1);
+            DisplayHelp();
         }
 
         #endregion

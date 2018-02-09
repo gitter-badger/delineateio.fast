@@ -37,7 +37,11 @@ namespace Delineate.Fast.Core.Nodes
 
         public string Path
         {
-            get{ return WorkingDirectory.FullName; }
+            get
+            {
+                string home = Environment.GetEnvironmentVariable("HOME"); 
+                return WorkingDirectory.FullName.TrimStart(home.ToCharArray()).ToLower();
+            }
         }
     }
 }

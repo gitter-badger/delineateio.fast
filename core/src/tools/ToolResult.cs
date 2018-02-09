@@ -1,5 +1,4 @@
 using System;
-using Delineate.Fast.Core.Processes;
 
 namespace Delineate.Fast.Core.Tools
 {
@@ -24,7 +23,7 @@ namespace Delineate.Fast.Core.Tools
         /// Creates a tool result
         /// </summary>
         /// <param name="result">Process result</param>
-        internal ToolResult(ProcessResult result)
+        internal ToolResult(Result result)
         {
             HasError = result.HasError;
             Output = result.Output;

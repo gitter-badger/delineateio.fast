@@ -49,7 +49,7 @@ namespace Delineate.Fast.Core.Commands
         /// <param name="programArgs">The program args provided</param>
         /// <param name="options">The valid options for the command</param>
         /// <param name="args">The command args</param>
-        public void Parse(string[] programArgs,CommandOptions options, CommandArgs args)
+        public void Parse(string[] programArgs, CommandOptions options, CommandArgs args)
         {
             //TODO: Refactor 
 

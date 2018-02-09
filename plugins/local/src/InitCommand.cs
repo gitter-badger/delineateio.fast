@@ -2,17 +2,17 @@ using System;
 using Delineate.Fast.Core.Nodes;
 using Delineate.Fast.Core.Commands;
 
-namespace Delineate.Fast.Templates.Local
+namespace Delineate.Fast.Plugins.Local
 {
     /// <summary>
     /// Setup command that is used to create the project artefacts 
     /// </summary>
-    [CommandMatch(Key="local:apply")]
-    [CommandOption(Key="-t", Description="Applys the local template", HasValue=true, Aliases="--template")]
-    public sealed class ApplyCommand : Command
+    [CommandInfo(Key="init:local", Description="Initiatizes the local environment", PluginName="local")]
+    [CommandOption(Key="-t", Description="Specifies the template to use when applying", HasValue=true, Aliases="--template")]
+    public sealed class InitCommand : Command
     {
         #region Prepare
-
+        
         /// <summary>
         /// Overide of the Prepare creates the correct 
         /// directories and files for the config

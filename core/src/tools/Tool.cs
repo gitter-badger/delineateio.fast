@@ -3,7 +3,6 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Delineate.Fast.Core.Processes;
 
 namespace Delineate.Fast.Core.Tools
 {
@@ -104,7 +103,7 @@ namespace Delineate.Fast.Core.Tools
         /// <param name="args">Arguments for the tool</param>
         protected ToolResult Run(params string[] args)
         {
-            return new ToolResult( ProcessManager.Execute(Name, args) );
+            return new ToolResult( Utils.Run(Name, args) );
         }
 
         #endregion
