@@ -2,8 +2,12 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
+
+
 using Delineate.Fast.Core.Commands;
-using Delineate.Fast.Core.Outputs;
+using Delineate.Fast.Core.Diagnostics;
+using Delineate.Fast.Core.Messages;
 
 namespace Delineate.Fast.Core.Nodes
 {
@@ -11,7 +15,8 @@ namespace Delineate.Fast.Core.Nodes
     /// Represents the root node in the command that will
     /// be used during the plan and Apply command methods
     /// </summary>
-    public sealed class FileNode : ActionNode
+    [DataContract]
+    public sealed class FileNode : ActionNode, IDebuggable
     {
         #region Properties 
 
@@ -19,13 +24,27 @@ namespace Delineate.Fast.Core.Nodes
         /// Indicates that a template
         /// </summary>
         /// <returns>Returns true if a template is set</returns>
+        [DataMember]
         public bool HasTemplate { get; private set; }
 
         /// <summary>
         /// The name of the template file to use
         /// </summary>
         /// <returns>The name of the template file</returns>
+        [DataMember]
         public string TemplateFileName { get; private set; }
+
+        /// <summary>
+        /// The full path of the file
+        /// </summary>
+        /// <returns>The file path</returns>
+        private string FullPath
+        {
+            get
+            {
+                return Path.Combine(WorkingDirectory.FullName, Name); 
+            }
+        }
 
         #endregion
 
@@ -94,11 +113,11 @@ namespace Delineate.Fast.Core.Nodes
 
             if(File.Exists(path))
             {
-                Command.Outputs.SendWarning(string.Format("File '{0}' will be overwritten", Name));
+                Outputs.Warning(string.Format("File '{0}' will be overwritten", Name));
             }
             else
             {
-                Command.Outputs.SendNormal(string.Format("File '{0}' will be created", Name));
+                Outputs.Normal(string.Format("File '{0}' will be created", Name));
             }
 
             return File.Exists(path);
@@ -114,11 +133,11 @@ namespace Delineate.Fast.Core.Nodes
 
             if(File.Exists(path))
             {
-                Command.Outputs.SendWarning(string.Format("File '{0}' will be deleted", Name));
+                Outputs.Warning(string.Format("File '{0}' will be deleted", Name));
             }
             else
             {
-                Command.Outputs.SendNormal(string.Format("File '{0}' doesn't exist", Name));
+                Outputs.Normal(string.Format("File '{0}' doesn't exist", Name));
             }
 
             return File.Exists(path);
@@ -143,7 +162,7 @@ namespace Delineate.Fast.Core.Nodes
 
             File.Copy(from, FullPath);
 
-            Command.Outputs.SendSuccess(string.Format("File '{0}' created from '{1}'", Name, TemplateFileName));
+            Outputs.Success(string.Format("File '{0}' created from '{1}'", Name, TemplateFileName));
         }
 
         /// <summary>
@@ -153,7 +172,7 @@ namespace Delineate.Fast.Core.Nodes
         {
             File.Create(FullPath);
 
-            Command.Outputs.SendSuccess(string.Format("File '{0}' created", Name));
+            Outputs.Success(string.Format("File '{0}' created", Name));
         }
 
         /// <summary>
@@ -163,20 +182,9 @@ namespace Delineate.Fast.Core.Nodes
         {
             File.Delete(FullPath);
 
-            Command.Outputs.SendSuccess(string.Format("File '{0}' deleted", Name, TemplateFileName));
+            Outputs.Success(string.Format("File '{0}' deleted", Name, TemplateFileName));
         }
 
         #endregion
-
-        private string FullPath
-        {
-            get
-            {
-                return string.Format("{0}{1}{2}", 
-                                WorkingDirectory.FullName, 
-                                Path.DirectorySeparatorChar, 
-                                Name); 
-            }
-        }
     }
 }

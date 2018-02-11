@@ -1,6 +1,6 @@
 using System;
-using Delineate.Fast.Core.Nodes;
 using Delineate.Fast.Core.Commands;
+using Delineate.Fast.Core.Nodes;
 
 namespace Delineate.Fast.Plugins.Local
 {

@@ -1,27 +1,31 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
 using System.Resources;
-using Delineate.Fast.Core.Nodes;
-using Delineate.Fast.Core.Outputs;
+using System.Collections.Generic;
+using System.Diagnostics;
+
+using Delineate.Fast.Core.Diagnostics;
+using Delineate.Fast.Core.Messages;
 using Delineate.Fast.Core.Help;
+using Delineate.Fast.Core.Nodes;
+using Delineate.Fast.Core.Versioning;
 
 namespace Delineate.Fast.Core.Commands
 {
     /// <summary>
-    /// Base class for all the commmands for Fast
+    /// Base class for all the Fast commmands
     /// </summary>
-    [CommandOption(Key="-v", Description="Returns the versions", Aliases="--version")]
-    [CommandOption(Key="-h", Description="Provides help for the requested command", Aliases="--help")]
-    [CommandOption(Key="-q", Description="Performs the command in quiet mode, only reporting errors", Aliases="--quiet")]
-    [CommandOption(Key="-l", Description="Indicates that the command should log", Aliases="--log")]
+    [CommandOption(Key="-v", Description="Returns the relevant versions for '{0}'", Aliases="--version")]
+    [CommandOption(Key="-h", Description="Provides help for the '{0}'", Aliases="--help")]
+    [CommandOption(Key="-q", Description="Performs '{0}' in quiet mode, only reporting errors", Aliases="--quiet")]
+    [CommandOption(Key="-l", Description="Specifies that '{0}' should be logged", Aliases="--log")]
     public abstract class Command
     {
         #region Properties
 
         /// <summary>
-        /// Object containing info about the command
+        /// The command info for this command
         /// </summary>
         /// <returns>The info</returns>
         public CommandInfo Info { get; set; }
@@ -29,46 +33,34 @@ namespace Delineate.Fast.Core.Commands
         /// <summary>
         /// The Output manager assigned to this command 
         /// </summary>
-        /// <returns></returns>
-        public OutputManager Outputs = new OutputManager();
+        /// <returns>Class that provides the outputting functionality</returns>
+        public MessageManager Outputs = new MessageManager();
 
         /// <summary>
-        /// Options that are av available for this command
+        /// Options that are available for this command
         /// </summary>
         /// <returns>The list of options</returns>
-        internal CommandOptions Options = new CommandOptions();
+        public CommandOptions Options = new CommandOptions();
 
         /// <summary>
-        /// The arguments which the command is executing with
+        /// The arguments which the command is currently executing with
         /// </summary>
         /// <returns>The args</returns>
-        public CommandArgs Args = new CommandArgs();
+        public CommandArgs Args {get; set;}
 
         /// <summary>
-        /// Log
+        /// Reference to the root node of the command
+        /// </summary>
+        /// <returns>The root node of the command</returns>
+        public RootNode Root {get; set;}
+        
+        /// <summary>
+        /// Indoicates if the 
         /// </summary>
         /// <returns></returns>
-        public CommandArgsParser Parser = new CommandArgsParser();
-
-        /// <summary>
-        /// Reference to the root node of the plan
-        /// </summary>
-        /// <returns>The root node of the plan</returns>
-        protected RootNode Root {get; set;}
-
-        /// <summary>
-        /// Indicates if apply can be safely invoked
-        /// </summary>
-        /// <returns>Returns true if the command can be safely applied</returns>
-        protected bool IsSafe { get; set; }
+        public bool IsSafeToApply { get; set; }
 
         #endregion
-
-        public Command()
-        {
-            //Move to factory
-            Root = RootNode.Create(this);
-        }
 
         /// <summary>
         /// Executes the current command 
@@ -76,124 +68,89 @@ namespace Delineate.Fast.Core.Commands
         /// <param name="programArgs">The arguments that were provided to the program</param>
         public void Execute(string[] programArgs)
         {
-            Parser.Parse(programArgs, Options, Args);
+            Debug.Indent();
+            Debug.WriteLine("Executing command {0} ...", GetType().FullName);
 
+            //Sets the Output accordingly
             Outputs.IsQuiet = false;
 
-            Outputs.SendBlank();
-            Outputs.SendImportant("Running Fast ...");
+            // Parses the args
+            Args = new CommandArgs(programArgs, Options);
 
-
-            if( Parser.HasErrors)
-            {
-                Outputs.SendBlank();
-                Outputs.SendError("There was an error parsing the provided arguments", 1);
-                DisplayHelp();
-                Completed();
-                return;
-            }
-
-            if( Args.IsHelp)
-            {
-                DisplayHelp();
-                Completed();
-                return;
-            }
-
-            if( Args.IsVersion)
-            {
-                DisplayVersion();
-                Completed();
-                return;
-            }
-
-            Prepare();
-            Plan();
-
-            if(IsSafe)
-            { 
-                Apply();
-            }
-
-            Completed();
-        }
-
-        private void Completed()
-        {
-            Outputs.SendBlank();
-            Outputs.SendSuccess("Fast completed successfully!");
-            Outputs.SendBlank();
-        }
-
-        internal void DefaultCommandWarning()
-        {
-            if(Info.IsDefault)
-            {
-                Outputs.SendBlank();
-                Outputs.SendWarning("No command was found, information below if for Fast");
-            }
+            //Returns the correct handler and executes
+            ICommandHandler handler = GetHandler();
+            handler.Execute();
+            Outputs.Flush();
         }
 
         /// <summary>
-        /// Displays the help section for the current command  
+        /// Creates the correct handler for the request 
         /// </summary>
-        internal void DisplayHelp()
+        /// <returns>Returns the handler to use</returns>
+        private ICommandHandler GetHandler()
         {
-            DefaultCommandWarning();
-            HelpManager help = new HelpManager(this);
-            help.Output();
+            if(Args.HasErrors)
+                return CreateHandler<ArgsCommandHandler>();
+
+            if(Args.Has("-h"))
+                return CreateHandler<HelpCommandHandler>();
+
+            if(Args.Has("-v"))
+                return CreateHandler<VersionCommandHandler>();
+
+            return CreateHandler<ExecuteCommandHandler>();
         }
 
-        /// <summary>
-        /// Displays the versions of the engines
-        /// </summary>
-        internal void DisplayVersion()
+        private T CreateHandler<T>() where T: BaseCommandHandler, new()
         {
-            DefaultCommandWarning();
+            return new T()
+            {
+                Command = this,
+                Messages = this.Outputs
+            };
+        } 
 
-            Outputs.SendBlank();
-            Outputs.Indent();
 
-            if( ! Info.IsCore)
-                Outputs.SendNormal(Utils.GetPluginVersion(GetType()), false);
-            
-            Outputs.SendNormal(Utils.GetFastVersion(), false);
-            Outputs.SendNormal(Utils.GetDotNetVersion(), false);
-            Outputs.Unindent();
-        }
+        #region Prepare
 
         /// <summary>
         /// Performs any required preparation before planning the command 
         /// </summary>
-        protected virtual void Prepare() {}
+        protected internal virtual void Prepare() {}
+
+        #endregion
+
+        #region Plan
 
         /// <summary>
         /// Executes the plan for the command and shows any warnings
         /// </summary>
-        protected virtual void Plan() 
+        protected internal virtual void Plan() 
         {
-            Outputs.SendBlank();
-            Outputs.SendNormal("Planning ...");
-            Outputs.SendBlank();
+            Outputs.Blank();
+            Outputs.Normal("Planning ...");
+            Outputs.Blank();
 
-            IsSafe = true;
+            IsSafeToApply = true;
             
             Outputs.Indent();
+            Outputs.Nest();
             Plan(Root.Nodes);
+            Outputs.Unnest();
             Outputs.Unindent();
 
-            if( ! IsSafe )
+            if( ! IsSafeToApply )
             {
-                if( Args.IsForced )
+                if( Args.Has("-f"))
                 {
-                    Outputs.SendBlank();
-                    Outputs.SendSuccess("Warnings have been overriden");
-                    IsSafe = true;
+                    Outputs.Blank();
+                    Outputs.Success("Warnings have been overriden");
+                    IsSafeToApply = true;
                 }
                 else
                 {
-                    Outputs.SendBlank();
-                    Outputs.SendError("Commmand could not be completed, please review the warnings.", 1);
+                    Outputs.Blank();
+                    Outputs.Error("Commmand could not be completed, please review the warnings.");
                 }
             }
         }
@@ -203,14 +160,14 @@ namespace Delineate.Fast.Core.Commands
         /// </summary>
         /// <param name="nodes">Nodes to perform the action for</param>
         /// <param name="indent">The current indent level of messages</param>
-        private void Plan(List<Node> nodes, int indent = 0)
+        private void Plan(List<Node> nodes)
         {
             if(nodes != null && nodes.Count > 0)
             {
                 foreach(ActionNode node in nodes)
                 {
                     if( node.Plan() )
-                        IsSafe = false;
+                        IsSafeToApply = false;
 
                     Outputs.Indent();
                     Plan(node.Nodes);
@@ -219,17 +176,23 @@ namespace Delineate.Fast.Core.Commands
             }
         }
 
+        #endregion
+
+        #region Apply
+
         /// <summary>
         /// Applies the command, only called if CanApply = true
         /// </summary>
-        protected virtual void Apply()
+        protected internal virtual void Apply()
         {   
-            Outputs.SendBlank();
-            Outputs.SendNormal("Applying ...");
-            Outputs.SendBlank();
+            Outputs.Blank();
+            Outputs.Normal("Applying ...");
+            Outputs.Blank();
 
             Outputs.Indent();
+            Outputs.Nest();
             Apply(Root.Nodes);
+            Outputs.Unnest();
             Outputs.Unindent();
         }
 
@@ -237,8 +200,7 @@ namespace Delineate.Fast.Core.Commands
         /// Recursive method that applies the changes
         /// </summary>
         /// <param name="nodes">Nodes to perform the action for</param>
-        /// <param name="indent">The current indent level of messages</param>
-        private void Apply(List<Node> nodes, int indent = 0)
+        private void Apply(List<Node> nodes)
         {
             if(nodes != null && nodes.Count > 0)
             {
@@ -247,10 +209,12 @@ namespace Delineate.Fast.Core.Commands
                     node.Apply();
 
                     Outputs.Indent();
-                    Apply(node.Nodes, indent + 1);
+                    Apply(node.Nodes);
                     Outputs.Unindent();
                 }
             }
         }
+
+        #endregion
     }
 }

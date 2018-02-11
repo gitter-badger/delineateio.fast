@@ -7,7 +7,7 @@ namespace Delineate.Fast.Core.Help
     {
         public Command Command { get; set; }
 
-        private List<BaseBuilder> Builders {get; set;}
+        private List<BaseHelpSection> Builders {get; set;}
 
         public HelpManager(Command command)
         {
@@ -17,20 +17,30 @@ namespace Delineate.Fast.Core.Help
 
         private void LoadBuilders()
         {
-            Builders = new List<BaseBuilder>();
-            Builders.Add( new PluginBuilder(Command));
-            Builders.Add( new CommandBuilder(Command));
-            Builders.Add( new DescriptionBuilder(Command));
-            Builders.Add( new OptionsBuilder(Command));
-            Builders.Add( new DocumentationBuilder(Command));
-            Builders.Add( new VersionsBuilder(Command));
+            Builders = new List<BaseHelpSection>();
+            Builders.Add( Create<PluginHelpSection>("Plugin") );
+            Builders.Add( Create<CommandHelpSection>("Command") );
+            Builders.Add( Create<DescriptionHelpSection>("Description") );
+            Builders.Add( Create<OptionsHelpSection>("Options") );
+            Builders.Add( Create<DocumentationHelpSection>("Documentation") );
+            Builders.Add( Create<VersionsHelpSection>("Versions") );
+        }
+
+        private T Create<T>(string header) where T: BaseHelpSection, new()
+        {
+            return new T()
+            {
+                Header = header,
+                Command = Command,
+                Messages = Command.Outputs
+            };
         }
 
         public void Output()
         {
-            foreach(BaseBuilder builder in Builders)
+            foreach(BaseHelpSection builder in Builders)
             {
-                builder.Output();
+                builder.Add();
             }
         }
     }

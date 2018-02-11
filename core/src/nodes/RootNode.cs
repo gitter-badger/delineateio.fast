@@ -1,7 +1,10 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using Delineate.Fast.Core.Commands;
+using System.Runtime.Serialization;
+
+using Delineate.Fast.Core.Messages;
+using Delineate.Fast.Core.Diagnostics;
 
 namespace Delineate.Fast.Core.Nodes
 {
@@ -9,7 +12,8 @@ namespace Delineate.Fast.Core.Nodes
     /// Represents the root node in the command that will
     /// be used during the plan and Apply command methods
     /// </summary>
-    public sealed class RootNode : Node
+    [DataContract]
+    public sealed class RootNode : Node, IDebuggable
     {
         #region Constants
 
@@ -24,24 +28,14 @@ namespace Delineate.Fast.Core.Nodes
         /// Utility function to return a new root node 
         /// when a command is being prepared for execution 
         /// </summary>
-        /// <returns></returns>    
-        public static RootNode Create(Command command)
+        public static RootNode Create(MessageManager outputs)
         {
             return new RootNode()
             {
                 Name = ROOT,
-                Command = command,
+                Outputs = outputs,
                 WorkingDirectory = new DirectoryInfo(Environment.CurrentDirectory)
             };
-        }
-
-        public string Path
-        {
-            get
-            {
-                string home = Environment.GetEnvironmentVariable("HOME"); 
-                return WorkingDirectory.FullName.TrimStart(home.ToCharArray()).ToLower();
-            }
         }
     }
 }

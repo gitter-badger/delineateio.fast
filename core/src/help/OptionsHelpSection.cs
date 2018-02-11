@@ -1,29 +1,24 @@
 using System.Text;
 using Delineate.Fast.Core.Commands;
-using Delineate.Fast.Core.Outputs;
+using Delineate.Fast.Core.Messages;
 
 namespace Delineate.Fast.Core.Help
 {
-    public class OptionsBuilder : BaseBuilder
+    public class OptionsHelpSection : BaseHelpSection
     {
-        public OptionsBuilder(Command command) : base(command) { }
-
-        public override void Output()
+        protected override void AddDetail()
         {
-            AddHeader("OPTIONS");
-
             foreach(CommandOption option in Command.Options.Items)
             {           
                 string aliases = "[" + string.Join(",", option.Aliases) + "]";
+                string command = Command.Info.Key.Replace(":", " ");
 
                 StringBuilder builder = new StringBuilder();
                 builder.Append(option.Key.PadRight(4));
                 builder.Append(aliases.PadRight(12));
-                builder.Append(option.Description);
+                builder.Append(string.Format(option.Description, command));
 
-                Command.Outputs.Indent(2);
-                Command.Outputs.SendNormal(builder.ToString(), isNested: false);
-                Command.Outputs.Unindent(2);
+                Messages.Normal(builder.ToString());
             }
         }
     }

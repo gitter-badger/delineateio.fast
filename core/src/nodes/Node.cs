@@ -1,7 +1,10 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using Delineate.Fast.Core.Commands;
+using System.Runtime.Serialization;
+
+using Delineate.Fast.Core.Messages;
+using Delineate.Fast.Core.Diagnostics;
 
 namespace Delineate.Fast.Core.Nodes
 {
@@ -9,7 +12,10 @@ namespace Delineate.Fast.Core.Nodes
     /// Represents a node in the command that will
     /// be used during the plan and Apply command methods
     /// </summary>
-    public abstract class Node
+    [DataContract]
+    [KnownType(typeof(FileNode))]
+    [KnownType(typeof(DirectoryNode))]
+    public abstract class Node : IDebuggable
     {
         #region Properties
 
@@ -23,22 +29,17 @@ namespace Delineate.Fast.Core.Nodes
         public Node Parent { get; private set; }
 
         /// <summary>
-        /// The Command that created the node
+        /// The Outputs Manager to use for updates
         /// </summary>
-        /// <returns>Returns the command</returns>
-        public Command Command { get; set; }
+        /// <returns>Returns the OuputManager</returns>
+        public MessageManager Outputs { get; set; }
 
         /// <summary>
         /// Name to be used for node
         /// </summary>
         /// <returns>Returns the name of the node</returns>
+        [DataMember]
         public string Name { get; set; }
-
-        /// <summary>
-        /// Indent of the action to be taken
-        /// </summary>
-        /// <returns></returns>
-        public int Indent { get; set; }
 
         /// <summary>
         /// Collection of any child nodes
@@ -47,6 +48,7 @@ namespace Delineate.Fast.Core.Nodes
         /// Returns an unsorted list of any child nodes, if there
         /// are n o nodes then null if returned
         /// </returns>
+        [DataMember]
         public List<Node> Nodes { get; set; }
 
         /// <summary>
@@ -73,8 +75,7 @@ namespace Delineate.Fast.Core.Nodes
                 Operation = operation,
                 WorkingDirectory = GetWorkingDirectory<T>(name),
                 Parent = this,
-                Command = this.Command,
-                Indent = this.Indent + 1
+                Outputs = Outputs
             };
 
             Nodes.Add(node);
@@ -91,11 +92,7 @@ namespace Delineate.Fast.Core.Nodes
         {
             if( typeof(T) == typeof(DirectoryNode) )
             {
-                string path = string.Format("{0}{1}{2}", 
-                                    WorkingDirectory.FullName, 
-                                    Path.DirectorySeparatorChar, 
-                                    name);
-                
+                string path = Path.Combine(WorkingDirectory.FullName, name);
                 return new DirectoryInfo(path);
             }
             else

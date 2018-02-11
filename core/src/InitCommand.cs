@@ -1,10 +1,11 @@
 using System;
+using Delineate.Fast.Core.Commands;
 using Delineate.Fast.Core.Nodes;
 
-namespace Delineate.Fast.Core.Commands
+namespace Delineate.Fast.Core
 {
     /// <summary>
-    /// Setup command that is used to create the project artefacts 
+    /// Init command that is used to create the Fast environment 
     /// </summary>
     [CommandInfo(Key="init", Description="Initializes the fast environment", IsCore=true)]
     public sealed class InitCommand : Command
@@ -13,9 +14,9 @@ namespace Delineate.Fast.Core.Commands
 
         /// <summary>
         /// Overide of the Prepare creates the correct 
-        /// directories and files for the config
+        /// directories and files for the Fast environment 
         /// </summary>
-        protected override void Prepare()
+        protected internal override void Prepare()
         {
             DirectoryNode fastDir = Root.Add<DirectoryNode>(".fast");
             fastDir.Add<FileNode>("config.yml");

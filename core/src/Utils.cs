@@ -6,31 +6,11 @@ using System.Diagnostics;
 
 namespace Delineate.Fast.Core
 { 
+    /// <summary>
+    /// Class that provides various utility methods
+    /// </summary>
     public static class Utils
     {
-        #region Versions
-
-        public static string GetPluginVersion(Type type)
-        {
-            string version = type.Assembly.GetName().Version.ToString();
-            return "Plugin".PadRight(12) + version;
-        }
-
-        public static string GetFastVersion()
-        {
-            string version = typeof(Utils).Assembly.GetName().Version.ToString();
-            return "Fast Engine".PadRight(12) + version;
-        }
-
-        public static string GetDotNetVersion()
-        {
-            string version = Run("dotnet", "--version").Output;
-            version = version.Replace(Environment.NewLine, string.Empty);
-            return ".NET Core".PadRight(12) + version;
-        }
-        
-        #endregion
-
         #region Download
 
         /// <summary>

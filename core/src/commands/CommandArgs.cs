@@ -15,36 +15,41 @@ namespace Delineate.Fast.Core.Commands
         /// Internal data structure holding the arguments
         /// </summary>
         /// <returns>Directory keyed on the option with a list of the values</returns>
-        private Dictionary<string, List<string>> Args = new Dictionary<string, List<string>>();
+        private Dictionary<string, string> Args = new Dictionary<string, string>();
 
         /// <summary>
-        /// Indicates if the command is to to be forced
+        /// Indicate if the args have errors 
         /// </summary>
-        /// <returns>Returns true if -f is present in the options</returns>
-        public bool IsForced
-        {
-            get{ return Args.ContainsKey("-f"); }
-        }
-
-        /// <summary>
-        /// Indicates that it's a version request
-        /// </summary>
-        /// <returns></returns>
-        public bool IsVersion
-        {
-            get{ return Args.ContainsKey("-v"); }
-        }
-
-        /// <summary>
-        /// Indicates if help has been requested for the command
-        /// </summary>
-        /// <returns>Returns true if -h is present in the options</returns>
-        public bool IsHelp
-        {
-            get { return Args.ContainsKey("-h"); }
-        }
+        /// <returns>Returns true if no erros</returns>
+        public bool HasErrors { get; private set; }
 
         #endregion
+
+        public CommandArgs(string[] args, CommandOptions options)
+        {
+            Parse(args, options);
+        }
+
+        /// <summary>
+        /// Parses the program args and validates
+        /// </summary>
+        /// <param name="programArgs"></param>
+        /// <param name="options"></param>
+        public void Parse(string[] programArgs, CommandOptions options)
+        {
+            for(int i = 0; i < programArgs.Length; i++)
+            {
+                string key = programArgs[i];
+
+                if(key.StartsWith("-"))
+                {
+                    if( ! options.Has(key))
+                        HasErrors = true;
+
+                    Add(key, null);
+                }
+            }
+        }
 
         /// <summary>
         /// Adds the option to the arguments 
@@ -53,24 +58,7 @@ namespace Delineate.Fast.Core.Commands
         /// <param name="value"></param>
         public void Add(string key, string value = null)
         {
-            if( Has( key) )
-            {
-                List<string> values = Get(key);
-                values.Add(value);
-            }
-            else
-            {
-                if(value == null)
-                {
-                    Args.Add(key, null);
-                }
-                else
-                {
-                    List<string> values = new List<string>();
-                    values.Add(value);
-                    Args.Add(key, values);
-                }
-            }
+            Args.Add(key, value);
         }
 
         /// <summary>
@@ -86,29 +74,11 @@ namespace Delineate.Fast.Core.Commands
         /// <summary>
         /// Returns the collection of values for the option
         /// </summary>
-        /// <param name="key">The option key to return the values for</param>
-        /// <returns>The list of values</returns>
-        public List<string> Get(string key)
+        /// <param name="key">The option key to return the value for</param>
+        /// <returns>The value</returns>
+        public string Get(string key)
         {
-            if( ! Has(key) )
-                throw new ArgumentException();
-
             return Args[key];
-        }
-
-        /// <summary>
-        /// Returns the first item in the args
-        /// </summary>
-        /// <param name="key">The key for the arg to retrieve</param>
-        /// <returns>The item as a string</returns>
-        public string GetFirst(string key)
-        {
-            List<string> items = Get(key);
-            
-            if(items == null || items.Count == 0)
-                throw new ArgumentException();
-
-            return items[0];
         }
     }    
 }

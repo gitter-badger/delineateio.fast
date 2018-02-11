@@ -1,13 +1,15 @@
 using System;
 using System.Reflection;
 
+using Delineate.Fast.Core.Diagnostics;
+
 namespace Delineate.Fast.Core.Commands
 {
     /// <summary>
     /// Decorator attritute to identify commands for dynamic laoding 
     /// </summary>
     [AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = false)]
-    public sealed class CommandInfo : Attribute
+    public sealed class CommandInfo : Attribute, IDebuggable
     {   
         #region Properties
 

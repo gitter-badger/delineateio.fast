@@ -1,6 +1,6 @@
-namespace Delineate.Fast.Core.Outputs
+namespace Delineate.Fast.Core.Messages
 {
-    public enum OutputLevel
+    public enum MessageLevel
     {
         Important, //Magenta
 

@@ -5,6 +5,9 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 
+using Delineate.Fast.Core.Diagnostics;
+using Delineate.Fast.Core.Nodes;
+
 namespace Delineate.Fast.Core.Commands
 {
     /// <summary>
@@ -12,7 +15,7 @@ namespace Delineate.Fast.Core.Commands
     /// </summary>
     public static class CommandFactory
     {
-        private static SortedDictionary<string, Type> Commands = new SortedDictionary<string, Type>();
+        private static SortedDictionary<string, Command> Commands = new SortedDictionary<string, Command>();
 
         /// <summary>
         /// Creates a command based on the closest match from the program args
@@ -27,7 +30,7 @@ namespace Delineate.Fast.Core.Commands
             if(Commands == null || Commands.Count == 0)
                 LoadCommands();
 
-            Command command = CreateCommand(programArgs);
+            Command command = GetCommand(programArgs);
             Debug.Unindent();
 
             return command; 
@@ -38,9 +41,10 @@ namespace Delineate.Fast.Core.Commands
         /// </summary>
         /// <param name="programArgs">The program args to be used to find the command</param>
         /// <returns>Returns an instance of teh command</returns>
-        private static Command CreateCommand(string[] programArgs)
+        private static Command GetCommand(string[] programArgs)
         {
-            Type commandType = typeof(DefaultCommand);
+            Command command = Commands["default"];
+
             List<string> args = new List<string>();
 
             Debug.WriteLine("Search command:");
@@ -59,68 +63,25 @@ namespace Delineate.Fast.Core.Commands
 
                 if( Commands.ContainsKey(match))
                 {   
-                    commandType = Commands[match];
-                    Debug.WriteLine(commandType.GetType().FullName);
+                    command = Commands[match];
+                    Debug.WriteLine(command.GetType().FullName);
                 }
             } 
             
             Debug.Unindent();
             
-            Command command = Activator.CreateInstance(commandType) as Command;
-            Debug.WriteLine("Created command: " + commandType.GetType().FullName);
-
-            SetFromAttributes(command);
-
             return command;
         }
         
         #region Attribute Loading
- 
-        private static void SetFromAttributes(Command command)
-        {
-            SetCommandInfo(command);
-            SetCommandOptions(command);
-        }
-
-        private static void SetCommandOptions(Command command)
-        {
-            var attributes = command.GetType().GetCustomAttributes(typeof(CommandOption));
-            if (attributes != null)
-            {
-                Debug.Indent();
-
-                foreach(CommandOption option in attributes)
-                {   
-                    command.Options.Add(option);
-                    Debug.WriteLine("Added option: " + option.Key + option.Aliases);
-                }
-
-                Debug.Unindent();
-            }
-        }
-        
-        private static void SetCommandInfo(Command command)
-        {
-            var attributes = command.GetType().GetCustomAttributes(typeof(CommandInfo));
-            if (attributes != null)
-            {
-                foreach(CommandInfo info in attributes)
-                {   
-                    command.Info = info;
-                    Debug.WriteLine("CommandInfo added");
-                }
-            }
-        }
 
         #endregion
 
         private static DirectoryInfo GetTemplatesDirectory()
         {
-            string path = string.Format("{0}{1}{2}",
-                                Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                                Path.DirectorySeparatorChar,
+            string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                                 "plugins");
-
+            
             return new DirectoryInfo(path);
         }
 
@@ -158,33 +119,49 @@ namespace Delineate.Fast.Core.Commands
         {
             Debug.Indent();
             Debug.WriteLine(assembly.FullName);
-            Debug.Indent();
 
             foreach (Type type in assembly.GetTypes())
             {
-                var attributes = type.GetCustomAttributes(typeof(CommandInfo));
-                if (attributes != null)
-                {
-                    foreach(CommandInfo info in attributes)
+                if( type.IsSubclassOf(typeof(Command)))
+                {   
+                    Command command = Activator.CreateInstance(type) as Command;
+                    Debug.Indent();
+                    Debug.WriteLine(command.GetType().FullName);
+                    Debug.Indent();
+                    var attributes = type.GetCustomAttributes();
+                    
+                    foreach(Attribute attribute in attributes)
                     {   
-                        if(! info.IsDefault)
-                        {
-                            Commands.Add(info.Key, type);
-                            Debug.WriteLine("Key: " + info.Key +", Type: " + type.FullName);
-                        }
+                        AddInfo(command, attribute as CommandInfo);
+                        AddOption(command, attribute as CommandOption);
                     }
+                    
+                    Commands.Add(command.Info.Key, command);
+
+                    Debug.Unindent();
+                    Debug.Unindent();
                 }
             }
 
             Debug.Unindent();
-            Debug.Unindent();
         }
 
-        public static SortedDictionary<string, Type> ReloadTemplates()
+        private static void AddInfo(Command command, CommandInfo info)
         {
-            Commands.Clear();
-            LoadCommands();
-            return Commands;
+            if( info != null )
+            {
+                command.Info = info;
+                info.Debug();
+            } 
+        }
+
+        private static void AddOption(Command command, CommandOption option)
+        {
+            if( option != null)
+            {
+                command.Options.Add(option);
+                option.Debug();
+            }
         }
     }
 }

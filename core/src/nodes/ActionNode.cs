@@ -1,10 +1,12 @@
 using System;
+using System.Runtime.Serialization;
 
 namespace Delineate.Fast.Core.Nodes
 {
     /// <summary>
     /// Class that presents the a node where action is required
     /// </summary>
+    [DataContract]
     public abstract class ActionNode: Node
     {
         /// <summary>
@@ -12,6 +14,7 @@ namespace Delineate.Fast.Core.Nodes
         /// the Plan and Apply Command methods 
         /// </summary>
         /// <returns>Returns the operation for the node</returns>
+        [DataMember]
         public NodeOperation Operation { get; set; }
 
         /// <summary>

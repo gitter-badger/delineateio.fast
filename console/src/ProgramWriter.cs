@@ -2,7 +2,7 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 using Delineate.Fast.Core.Commands;
-using Delineate.Fast.Core.Outputs;
+using Delineate.Fast.Core.Messages;
 
 namespace Delineate.Fast
 {
@@ -10,83 +10,71 @@ namespace Delineate.Fast
     /// ConsoleWriter provides additional formatting options 
     /// when writing output via the console
     /// </summary>
-    public static class ProgramWriter
+    public static class ConsoleFormatter
     {
-        public static void Write(string line, OutputLevel level = OutputLevel.Normal, 
-                                            int blanks = 0, int indent = 0)
+        public static void Write(MessageEventArgs e)
         {
-            
-            List<string> lines = new List<string>();
-            lines.Add(line);
-            Write(lines, level, blanks, indent);
-        }
-
-        public static void Write(OutputEventArgs e)
-        {
-            Write(e.Lines, e.Level, e.Blanks, e.Indent, e.IsNested);
+            foreach(MessageInfo message in e.Messages)
+            {
+                Write(message);
+            }
         }
 
         /// <summary>
         /// Writes the messasges from the commands
         /// </summary>
         /// <param name="messages"></param>
-        public static void Write(IList<string> lines, OutputLevel level = OutputLevel.Normal, 
-                                            int blanks = 0, int indent = 0, bool isNested = true)
+        public static void Write(MessageInfo message)
         {
             StringBuilder builder = new StringBuilder();
-
-            while(blanks > 0)
+    
+            for(int i = 0; i < message.Indent; i++)
             {
-                Console.WriteLine(string.Empty);
-                blanks--;
-            }
-                        
-            foreach(var line in lines)
-            {
-                for(int i = 0; i < indent; i++)
-                {
-                    if( i == indent -1 && isNested)
-                        builder.Append("  - ");
-                    else
-                        builder.Append("    ");
-                }
-
-                builder.Append(line.ToString() + Environment.NewLine);
+                if( i == message.Indent -1 && message.IsNested)
+                    builder.Append("  - ");
+                else
+                    builder.Append("    ");
             }
 
-            Console.ForegroundColor = GetColor(level);
+                builder.Append(message.Text.ToString() + Environment.NewLine);
+            
+            Console.ForegroundColor = GetColor(message.Level);
             Console.Write(builder.ToString());
             Console.ForegroundColor = ConsoleColor.White;
         }
 
         public static void WriteException(Exception exception)
         {
-            //TODO: Write to an error file
+            Write(new MessageInfo()
+            {
+                Text = exception.Message,
+                Level = MessageLevel.Error
+            });
         }
 
-        private static ConsoleColor GetColor(OutputLevel level)
+        private static ConsoleColor GetColor(MessageLevel level)
         {
             switch(level)
             {
-                case OutputLevel.Important: //Magenta
+                case MessageLevel.Important: //Magenta
                     return ConsoleColor.Magenta;
 
-                case OutputLevel.Normal: //White
+                case MessageLevel.Normal: //White
                     return ConsoleColor.White;
 
-                case OutputLevel.Success: //Green 
+                case MessageLevel.Success: //Green 
                     return ConsoleColor.DarkGreen;
 
-                case OutputLevel.Warning: //Yellow
+                case MessageLevel.Warning: //Yellow
                     return ConsoleColor.DarkYellow;
 
-                case OutputLevel.Error: // Red
+                case MessageLevel.Error: // Red
                     return ConsoleColor.DarkRed;
                 
-                case OutputLevel.Link:  // Dark Cyan 
+                case MessageLevel.Link:  // Dark Cyan 
                     return ConsoleColor.DarkCyan;
 
-                case OutputLevel.Info:  //Grey
+                case MessageLevel.Info:  //Grey
                     return ConsoleColor.DarkGray;
 
                 default:

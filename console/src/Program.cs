@@ -1,6 +1,6 @@
 ﻿using System;
 using Delineate.Fast.Core.Commands;
-using Delineate.Fast.Core.Outputs;
+using Delineate.Fast.Core.Messages;
 
 namespace Delineate.Fast
 {
@@ -9,26 +9,25 @@ namespace Delineate.Fast
         static void Main(string[] args)
         {
             if(args.Length == 0)
-                args = new string[]{"-h"};
+                args = new string[]{"init"};
 
             try
             {
-                Command command = CommandFactory.Create(args );
-                command.Outputs.OnOutput += new OutputEventHandler(Output);
-                command.Execute( args );
+                Command command = CommandFactory.Create(args);
+                command.Outputs.OnFlushed += new MessageEventHandler(Output);
+                command.Execute(args );
                 Environment.Exit(0);
             }
             catch (Exception exception)
             {
-                
-                ProgramWriter.WriteException(exception);
+                ConsoleFormatter.WriteException(exception);
                 Environment.Exit(1);
             }
         }
 
-        static void Output(object sender, OutputEventArgs e)
+        static void Output(object sender, MessageEventArgs e)
         {
-            ProgramWriter.Write(e);
+            ConsoleFormatter.Write(e);
         }
     }
 }

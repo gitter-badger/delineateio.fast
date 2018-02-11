@@ -1,6 +1,6 @@
 using System;
-using Delineate.Fast.Core.Nodes;
 using Delineate.Fast.Core.Commands;
+using Delineate.Fast.Core.Nodes;
 
 namespace Delineate.Fast.Plugins.Local
 {
@@ -10,6 +10,9 @@ namespace Delineate.Fast.Plugins.Local
     [CommandInfo(Key="diagnose:local", Description="Diagnoses the local environment", PluginName="local")]
     public sealed class DiagnoseCommand : Command
     {
-        
+        /// <summary>
+        /// Overrides the prepare statement
+        /// </summary>
+        protected override void Prepare() {}
     }
 }

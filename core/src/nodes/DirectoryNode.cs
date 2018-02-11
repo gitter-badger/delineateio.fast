@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using Delineate.Fast.Core.Outputs;
+using Delineate.Fast.Core.Messages;
 
 namespace Delineate.Fast.Core.Nodes
 {
@@ -59,11 +59,11 @@ namespace Delineate.Fast.Core.Nodes
         {
             if(WorkingDirectory.Exists)
             {
-                Command.Outputs.SendNormal(string.Format("Directory '{0}' exists", Name));
+                Outputs.Normal(string.Format("Directory '{0}' exists", Name));
             }
             else
             {
-                Command.Outputs.SendNormal(string.Format("Directory '{0}' will be created", Name));
+                Outputs.Normal(string.Format("Directory '{0}' will be created", Name));
             }
 
             return false;
@@ -77,11 +77,11 @@ namespace Delineate.Fast.Core.Nodes
         {
             if(WorkingDirectory.Exists)
             {
-                Command.Outputs.SendWarning(string.Format("Directory '{0}' will be deleted", Name));
+                Outputs.Warning(string.Format("Directory '{0}' will be deleted", Name));
             }
             else
             {
-                Command.Outputs.SendNormal(string.Format("Directory '{0}' doesn't exist", Name));
+                Outputs.Normal(string.Format("Directory '{0}' doesn't exist", Name));
             }
 
             return WorkingDirectory.Exists;
@@ -98,12 +98,12 @@ namespace Delineate.Fast.Core.Nodes
         {
             if(Directory.Exists(WorkingDirectory.FullName))
             {
-                Command.Outputs.SendNormal(string.Format("Directory '{0}' existed", Name));
+                Outputs.Normal(string.Format("Directory '{0}' existed", Name));
             }
             else
             {
                 Directory.CreateDirectory(WorkingDirectory.FullName);
-                Command.Outputs.SendSuccess(string.Format("Directory '{0}' created", Name));
+                Outputs.Success(string.Format("Directory '{0}' created", Name));
             }
         }
 
@@ -115,11 +115,11 @@ namespace Delineate.Fast.Core.Nodes
             if(Directory.Exists(WorkingDirectory.FullName))
             {
                 Directory.Delete(WorkingDirectory.FullName, true);
-                Command.Outputs.SendSuccess(string.Format("Directory '{0}' deleted", Name));
+                Outputs.Success(string.Format("Directory '{0}' deleted", Name));
             }
             else
             {
-                Command.Outputs.SendNormal(string.Format("Directory '{0}' didn't exist", Name));
+                Outputs.Normal(string.Format("Directory '{0}' didn't exist", Name));
             }
         }
 
