@@ -7,13 +7,13 @@ namespace Delineate.Fast.Core.Help
     {
         protected override bool IsVisible
         {
-            get{ return !Command.Info.IsDefault; }
+            get{ return ! Context.Info.IsDefault; }
         }
 
         protected override void AddDetail()
         {
-            string detail = Command.Info.Key.Replace(":", " ") + " [OPTIONS]";
-            Messages.Success(detail);
+            string detail = Context.Info.Key.Replace(":", " ") + " [OPTIONS]";
+            Context.Messages.Success(detail);
         }
     }
 }

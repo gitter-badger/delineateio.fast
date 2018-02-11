@@ -25,9 +25,9 @@ namespace Delineate.Fast.Core.Commands
 
         #endregion
 
-        public CommandArgs(string[] args, CommandOptions options)
+        public CommandArgs(string[] args, CommandContext context)
         {
-            Parse(args, options);
+            Parse(args, context.Options);
         }
 
         /// <summary>

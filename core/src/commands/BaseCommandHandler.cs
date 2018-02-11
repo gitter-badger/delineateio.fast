@@ -15,9 +15,7 @@ namespace Delineate.Fast.Core.Commands
         /// A reference to the command being executed 
         /// </summary>
         /// <returns></returns>
-        public Command Command { get;set; }
-
-        public MessageManager Messages { get;set; }
+        public CommandContext Context { get;set; }
         
         /// <summary>
         /// Executes the handler and top and tails with the 
@@ -25,26 +23,22 @@ namespace Delineate.Fast.Core.Commands
         /// </summary>
         public void Execute()
         {
-            if(Command.Info.IsDefault)
+            if(Context.Info.IsDefault)
             {
-                Messages.Blank();
-                Messages.Warning("No command was found, information below if for Fast");
+                Context.Messages.Blank();
+                Context.Messages.Warning("No command was found, information below if for Fast");
             }
 
+            Context.Messages.Blank();
+            Context.Messages.Important("Running Fast ...");
 
-            Messages.Blank();
-            Messages.Important("Running Fast ...");
-
-            Debug.Indent();
-            Debug.WriteLine(this.GetType().FullName);
+            Context.Logs.Log(this.GetType().FullName);
 
             Handle();
 
-            Debug.Unindent();
-
-            Messages.Blank();
-            Messages.Success("Fast completed successfully!");
-            Messages.Blank();
+            Context.Messages.Blank();
+            Context.Messages.Success("Fast completed successfully!");
+            Context.Messages.Blank();
         }
         
         /// <summary>

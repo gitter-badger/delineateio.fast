@@ -3,7 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-using Delineate.Fast.Core.Messages;
+using Delineate.Fast.Core.Commands;
 using Delineate.Fast.Core.Diagnostics;
 
 namespace Delineate.Fast.Core.Nodes
@@ -29,10 +29,10 @@ namespace Delineate.Fast.Core.Nodes
         public Node Parent { get; private set; }
 
         /// <summary>
-        /// The Outputs Manager to use for updates
+        /// The context of the execution
         /// </summary>
-        /// <returns>Returns the OuputManager</returns>
-        public MessageManager Outputs { get; set; }
+        /// <returns>Returns the current context</returns>
+        public CommandContext Context { get; set; }
 
         /// <summary>
         /// Name to be used for node
@@ -75,7 +75,7 @@ namespace Delineate.Fast.Core.Nodes
                 Operation = operation,
                 WorkingDirectory = GetWorkingDirectory<T>(name),
                 Parent = this,
-                Outputs = Outputs
+                Context = Context
             };
 
             Nodes.Add(node);

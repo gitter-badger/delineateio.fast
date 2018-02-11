@@ -8,11 +8,11 @@ namespace Delineate.Fast.Core.Help
     {
         protected override void AddDetail()
         {
-            if( ! Command.Info.IsCore)
-                Messages.Info(VersionManager.GetPluginVersion(Command.GetType()));
+            if( ! Context.Info.IsCore)
+                Context.Messages.Info(VersionManager.GetPluginVersion(Context.Command.GetType()));
             
-            Messages.Info(VersionManager.GetFastVersion());
-            Messages.Info(VersionManager.GetDotNetVersion());
+            Context.Messages.Info(VersionManager.GetFastVersion());
+            Context.Messages.Info(VersionManager.GetDotNetVersion());
         }
     }
 }

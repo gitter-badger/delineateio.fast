@@ -122,11 +122,7 @@ namespace Delineate.Fast.Tools.Hashicorp
         private void Move(FileInfo decompressedFile)
         {
             string home = Environment.GetEnvironmentVariable("HOME");
-            string softwarePath = Path.Combine(home,
-                                        "software",
-                                        Name,
-                                        Version
-                                        ); 
+            string softwarePath = Path.Combine(home, "software", Name, Version); 
 
             if(Directory.Exists(softwarePath))
                 Directory.Delete(softwarePath, true);

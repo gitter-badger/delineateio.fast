@@ -58,13 +58,10 @@ namespace Delineate.Fast.Core.Nodes
         private bool PlanCreateDirectory()
         {
             if(WorkingDirectory.Exists)
-            {
-                Outputs.Normal(string.Format("Directory '{0}' exists", Name));
-            }
+                Context.Messages.Normal("Directory '{0}' exists", Name);
+            
             else
-            {
-                Outputs.Normal(string.Format("Directory '{0}' will be created", Name));
-            }
+                Context.Messages.Normal("Directory '{0}' will be created", Name);
 
             return false;
         }
@@ -76,13 +73,10 @@ namespace Delineate.Fast.Core.Nodes
         private bool PlanDeleteDirectory()
         {
             if(WorkingDirectory.Exists)
-            {
-                Outputs.Warning(string.Format("Directory '{0}' will be deleted", Name));
-            }
+                Context.Messages.Warning("Directory '{0}' will be deleted", Name);
+
             else
-            {
-                Outputs.Normal(string.Format("Directory '{0}' doesn't exist", Name));
-            }
+                Context.Messages.Normal("Directory '{0}' doesn't exist", Name);
 
             return WorkingDirectory.Exists;
         }
@@ -98,12 +92,12 @@ namespace Delineate.Fast.Core.Nodes
         {
             if(Directory.Exists(WorkingDirectory.FullName))
             {
-                Outputs.Normal(string.Format("Directory '{0}' existed", Name));
+                Context.Messages.Normal("Directory '{0}' existed", Name);
             }
             else
             {
                 Directory.CreateDirectory(WorkingDirectory.FullName);
-                Outputs.Success(string.Format("Directory '{0}' created", Name));
+                Context.Messages.Success("Directory '{0}' created", Name);
             }
         }
 
@@ -115,11 +109,11 @@ namespace Delineate.Fast.Core.Nodes
             if(Directory.Exists(WorkingDirectory.FullName))
             {
                 Directory.Delete(WorkingDirectory.FullName, true);
-                Outputs.Success(string.Format("Directory '{0}' deleted", Name));
+                Context.Messages.Success("Directory '{0}' deleted", Name);
             }
             else
             {
-                Outputs.Normal(string.Format("Directory '{0}' didn't exist", Name));
+                 Context.Messages.Normal("Directory '{0}' didn't exist", Name);
             }
         }
 

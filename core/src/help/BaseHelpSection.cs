@@ -24,13 +24,7 @@ namespace Delineate.Fast.Core.Help
         /// The message manager to use for notifications
         /// </summary>
         /// <returns>The message manager</returns>
-        public MessageManager Messages { get; internal set; }
-
-        /// <summary>
-        /// The command for which the help section will be output
-        /// </summary>
-        /// <returns>The command</returns>
-        public Command Command { get; internal set; }
+        public CommandContext Context { get; internal set; }
 
         /// <summary>
         /// The header text to be used for 
@@ -47,9 +41,9 @@ namespace Delineate.Fast.Core.Help
             {
                 AddHeader();
                 
-                Messages.Indent(2);
+                Context.Messages.Indent(2);
                 AddDetail();
-                Messages.Unindent(2);
+                Context.Messages.Unindent(2);
             }
         }
 
@@ -59,11 +53,11 @@ namespace Delineate.Fast.Core.Help
         /// <param name="line">The header to add</param>
         protected void AddHeader()
         {
-            Messages.Indent();
-            Messages.Blank();
-            Messages.Normal(Header.ToUpper());
-            Messages.Unindent();
-            Messages.Blank();
+            Context.Messages.Indent();
+            Context.Messages.Blank();
+            Context.Messages.Normal(Header.ToUpper());
+            Context.Messages.Unindent();
+            Context.Messages.Blank();
         }
 
         /// <summary>

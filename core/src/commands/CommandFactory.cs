@@ -22,18 +22,20 @@ namespace Delineate.Fast.Core.Commands
         /// </summary>
         /// <param name="programArgs">The programs args</param>
         /// <returns>An instance of the command to execute</returns>
-        public static Command Create(string[] programArgs)
+        public static CommandContext Create(string[] programArgs)
         {
-            Debug.Indent();
-            Debug.WriteLine("Command requested: " + string.Join(", ", programArgs));
+            CommandContext context = new CommandContext();
+            context.Logs.Log("Command requested: " + string.Join(", ", programArgs)); 
 
             if(Commands == null || Commands.Count == 0)
-                LoadCommands();
+                LoadCommands(context);
 
-            Command command = GetCommand(programArgs);
-            Debug.Unindent();
+            SetCommand(context, programArgs);
+            
+            SetupContext(context, context.Command.GetType());
+            context.Command.Context = context;
 
-            return command; 
+            return context;
         }
 
         /// <summary>
@@ -41,20 +43,16 @@ namespace Delineate.Fast.Core.Commands
         /// </summary>
         /// <param name="programArgs">The program args to be used to find the command</param>
         /// <returns>Returns an instance of teh command</returns>
-        private static Command GetCommand(string[] programArgs)
+        private static void SetCommand(CommandContext context, string[] programArgs)
         {
             Command command = Commands["default"];
-
             List<string> args = new List<string>();
-
-            Debug.WriteLine("Search command:");
-            Debug.Indent();
 
             for(int i = 0; i < programArgs.Length; i++)
             {
                 if(programArgs[i].StartsWith("-"))
                 { 
-                    Debug.WriteLine("Found first option, exited: " + programArgs[i]);
+                    context.Logs.Log("Found first option, exited: " + programArgs[i]);
                     break;
                 }
 
@@ -64,13 +62,11 @@ namespace Delineate.Fast.Core.Commands
                 if( Commands.ContainsKey(match))
                 {   
                     command = Commands[match];
-                    Debug.WriteLine(command.GetType().FullName);
+                    context.Logs.Log(command.GetType().FullName);
                 }
             } 
-            
-            Debug.Unindent();
-            
-            return command;
+
+            context.Command = command;
         }
         
         #region Attribute Loading
@@ -89,24 +85,23 @@ namespace Delineate.Fast.Core.Commands
         /// Loads the commands collection if required 
         /// </summary>
         /// <returns>Returns a colelction keyed to be matched against the program args</returns>
-        private static void LoadCommands()
+        private static void LoadCommands(CommandContext context)
         {
-            Debug.Indent();
-            Debug.WriteLine("Loading commands ...");
+            context.Logs.Log("Loading commands ...");
 
             // Loads any command from Core
-            LoadAssemblyCommands(Assembly.GetAssembly(typeof(CommandFactory)));
+            LoadAssemblyCommands(context, Assembly.GetAssembly(typeof(CommandFactory)));
 
             DirectoryInfo[] templates = GetTemplatesDirectory().GetDirectories();
 
             foreach(DirectoryInfo template in templates)
             {
-                Debug.WriteLine("Template: " + template.Name);
-                Debug.WriteLine("Path: " + template.FullName);
+                context.Logs.Log("Template: " + template.Name);
+                context.Logs.Log("Path: " + template.FullName);
             
                 foreach(FileInfo file in template.GetFiles("*.dll"))
                 {
-                    LoadAssemblyCommands(Assembly.LoadFile(file.FullName));
+                    LoadAssemblyCommands(context, Assembly.LoadFile(file.FullName));
                 }
             }
         }
@@ -115,52 +110,54 @@ namespace Delineate.Fast.Core.Commands
         /// Loads the command for a given 
         /// </summary>
         /// <param name="assembly"></param>
-        private static void LoadAssemblyCommands(Assembly assembly)
+        private static void LoadAssemblyCommands(CommandContext context, Assembly assembly)
         {
-            Debug.Indent();
-            Debug.WriteLine(assembly.FullName);
+            context.Logs.Log(assembly.FullName);
 
             foreach (Type type in assembly.GetTypes())
             {
                 if( type.IsSubclassOf(typeof(Command)))
                 {   
                     Command command = Activator.CreateInstance(type) as Command;
-                    Debug.Indent();
-                    Debug.WriteLine(command.GetType().FullName);
-                    Debug.Indent();
-                    var attributes = type.GetCustomAttributes();
-                    
-                    foreach(Attribute attribute in attributes)
-                    {   
-                        AddInfo(command, attribute as CommandInfo);
-                        AddOption(command, attribute as CommandOption);
-                    }
-                    
-                    Commands.Add(command.Info.Key, command);
+                    context.Logs.Log(command.GetType().FullName);
 
-                    Debug.Unindent();
-                    Debug.Unindent();
+                    SetupContext(context, type);
+
+                    Commands.Add(context.Info.Key, command);
                 }
             }
-
-            Debug.Unindent();
         }
 
-        private static void AddInfo(Command command, CommandInfo info)
+        private static void SetupContext(CommandContext context, Type type)
+        {
+            var attributes = type.GetCustomAttributes();
+            
+            //TODO: HACK!
+            context.Options = new CommandOptions();
+            context.Info = null;
+
+            foreach(Attribute attribute in attributes)
+            {   
+                AddInfo(context, attribute as CommandInfo);
+                AddOption(context, attribute as CommandOption);
+            }
+        }
+
+        private static void AddInfo(CommandContext context, CommandInfo info)
         {
             if( info != null )
             {
-                command.Info = info;
-                info.Debug();
+                context.Info = info;
+                context.Logs.Log(info.Debug());
             } 
         }
 
-        private static void AddOption(Command command, CommandOption option)
+        private static void AddOption(CommandContext context, CommandOption option)
         {
             if( option != null)
             {
-                command.Options.Add(option);
-                option.Debug();
+                context.Options.Add(option);
+                context.Logs.Log(option.Debug());
             }
         }
     }

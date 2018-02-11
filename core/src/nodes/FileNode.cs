@@ -113,11 +113,11 @@ namespace Delineate.Fast.Core.Nodes
 
             if(File.Exists(path))
             {
-                Outputs.Warning(string.Format("File '{0}' will be overwritten", Name));
+                Context.Messages.Warning("File '{0}' will be overwritten", Name);
             }
             else
             {
-                Outputs.Normal(string.Format("File '{0}' will be created", Name));
+                Context.Messages.Normal("File '{0}' will be created", Name);
             }
 
             return File.Exists(path);
@@ -133,11 +133,11 @@ namespace Delineate.Fast.Core.Nodes
 
             if(File.Exists(path))
             {
-                Outputs.Warning(string.Format("File '{0}' will be deleted", Name));
+                Context.Messages.Warning("File '{0}' will be deleted", Name);
             }
             else
             {
-                Outputs.Normal(string.Format("File '{0}' doesn't exist", Name));
+                Context.Messages.Normal("File '{0}' doesn't exist", Name);
             }
 
             return File.Exists(path);
@@ -162,7 +162,7 @@ namespace Delineate.Fast.Core.Nodes
 
             File.Copy(from, FullPath);
 
-            Outputs.Success(string.Format("File '{0}' created from '{1}'", Name, TemplateFileName));
+            Context.Messages.Success("File '{0}' created from '{1}'", Name, TemplateFileName);
         }
 
         /// <summary>
@@ -172,7 +172,7 @@ namespace Delineate.Fast.Core.Nodes
         {
             File.Create(FullPath);
 
-            Outputs.Success(string.Format("File '{0}' created", Name));
+            Context.Messages.Success("File '{0}' created", Name);
         }
 
         /// <summary>
@@ -182,7 +182,7 @@ namespace Delineate.Fast.Core.Nodes
         {
             File.Delete(FullPath);
 
-            Outputs.Success(string.Format("File '{0}' deleted", Name, TemplateFileName));
+            Context.Messages.Success("File '{0}' deleted", Name, TemplateFileName);
         }
 
         #endregion

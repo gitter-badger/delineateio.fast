@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+
 using Delineate.Fast.Core.Commands;
 using Delineate.Fast.Core.Messages;
 
@@ -9,13 +11,19 @@ namespace Delineate.Fast
         static void Main(string[] args)
         {
             if(args.Length == 0)
-                args = new string[]{"init"};
+                args = new string[]{"-h"};
 
             try
             {
-                Command command = CommandFactory.Create(args);
-                command.Outputs.OnFlushed += new MessageEventHandler(Output);
-                command.Execute(args );
+                // Creates the command context
+                CommandContext context = CommandFactory.Create(args);
+
+                //Writes up events to the messages
+                context.Messages.OnFlushed += new MessageEventHandler(Output);
+                
+                //Executes the command 
+                context.Command.Execute(args );
+                
                 Environment.Exit(0);
             }
             catch (Exception exception)

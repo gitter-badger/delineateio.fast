@@ -10,16 +10,16 @@ namespace Delineate.Fast.Core.Commands
     {
         protected override void Handle()
         {
-            Command.Root = RootNode.Create(Messages);
+            Context.Command.Root = RootNode.Create(Context);
 
-            Command.Prepare();
-            Command.Root.Debug();
+            Context.Command.Prepare();
+            Context.Command.Root.Debug();
 
-            Command.Plan();
+            Context.Command.Plan();
             
-            if(Command.IsSafeToApply)
+            if(Context.Command.IsSafeToApply)
             { 
-                Command.Apply();
+                Context.Command.Apply();
             }
         }
     }

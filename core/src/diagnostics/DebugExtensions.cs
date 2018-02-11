@@ -15,11 +15,9 @@ namespace Delineate.Fast.Core.Diagnostics
         /// </summary>
         /// <param name="instance"></param>
         /// <returns></returns>
-        public static void Debug(this IDebuggable instance)
+        public static string Debug(this IDebuggable instance)
         {
-            DataContractJsonSerializer serializer = new DataContractJsonSerializer(instance.GetType());  
-
-            string result = null;
+            DataContractJsonSerializer serializer = new DataContractJsonSerializer(instance.GetType());
 
             using (MemoryStream stream = new MemoryStream())
             {  
@@ -28,11 +26,9 @@ namespace Delineate.Fast.Core.Diagnostics
 
                 using (StreamReader reader = new StreamReader(stream))
                 {  
-                    result = reader.ReadToEnd();
+                    return reader.ReadToEnd();
                 }
             }
-
-            System.Diagnostics.Debug.WriteLine(result);
         }   
     }
 }

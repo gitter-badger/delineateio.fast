@@ -3,7 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-using Delineate.Fast.Core.Messages;
+using Delineate.Fast.Core.Commands;
 using Delineate.Fast.Core.Diagnostics;
 
 namespace Delineate.Fast.Core.Nodes
@@ -28,12 +28,12 @@ namespace Delineate.Fast.Core.Nodes
         /// Utility function to return a new root node 
         /// when a command is being prepared for execution 
         /// </summary>
-        public static RootNode Create(MessageManager outputs)
+        public static RootNode Create(CommandContext context)
         {
             return new RootNode()
             {
                 Name = ROOT,
-                Outputs = outputs,
+                Context = context,
                 WorkingDirectory = new DirectoryInfo(Environment.CurrentDirectory)
             };
         }

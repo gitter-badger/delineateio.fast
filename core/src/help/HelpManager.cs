@@ -5,42 +5,38 @@ namespace Delineate.Fast.Core.Help
 {
     public class HelpManager
     {
-        public Command Command { get; set; }
+        private List<BaseHelpSection> Sections {get; set;}
 
-        private List<BaseHelpSection> Builders {get; set;}
-
-        public HelpManager(Command command)
+        public HelpManager(CommandContext context)
         {
-            Command = command;
-            LoadBuilders();
+            LoadSections(context);
         }
 
-        private void LoadBuilders()
+        private void LoadSections(CommandContext context)
         {
-            Builders = new List<BaseHelpSection>();
-            Builders.Add( Create<PluginHelpSection>("Plugin") );
-            Builders.Add( Create<CommandHelpSection>("Command") );
-            Builders.Add( Create<DescriptionHelpSection>("Description") );
-            Builders.Add( Create<OptionsHelpSection>("Options") );
-            Builders.Add( Create<DocumentationHelpSection>("Documentation") );
-            Builders.Add( Create<VersionsHelpSection>("Versions") );
+            Sections = new List<BaseHelpSection>();
+            Sections.Add( Create<PluginHelpSection>(context, "Plugin") );
+            Sections.Add( Create<CommandHelpSection>(context, "Command") );
+            Sections.Add( Create<DescriptionHelpSection>(context, "Description") );
+            Sections.Add( Create<OptionsHelpSection>(context, "Options") );
+            Sections.Add( Create<DocumentationHelpSection>(context, "Documentation") );
+            Sections.Add( Create<VersionsHelpSection>(context, "Versions") );
         }
 
-        private T Create<T>(string header) where T: BaseHelpSection, new()
+        private T Create<T>(CommandContext context, string header) where T: BaseHelpSection, new()
         {
             return new T()
             {
                 Header = header,
-                Command = Command,
-                Messages = Command.Outputs
+                Context = context
             };
         }
 
         public void Output()
         {
-            foreach(BaseHelpSection builder in Builders)
+            foreach(BaseHelpSection section in Sections)
             {
-                builder.Add();
+                section.Add();
             }
         }
     }

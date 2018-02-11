@@ -7,12 +7,12 @@ namespace Delineate.Fast.Core.Help
     {
         protected override bool IsVisible
         {
-            get{ return !Command.Info.IsDefault; }
+            get{ return ! Context.Info.IsDefault; }
         }
 
         protected override void AddDetail()
         {
-            Messages.Normal(Command.Info.Description);
+            Context.Messages.Normal(Context.Info.Description);
         }
     }
 }

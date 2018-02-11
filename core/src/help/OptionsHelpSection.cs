@@ -8,17 +8,17 @@ namespace Delineate.Fast.Core.Help
     {
         protected override void AddDetail()
         {
-            foreach(CommandOption option in Command.Options.Items)
+            foreach(CommandOption option in Context.Options.Items)
             {           
                 string aliases = "[" + string.Join(",", option.Aliases) + "]";
-                string command = Command.Info.Key.Replace(":", " ");
+                string command = Context.Info.Key.Replace(":", " ");
 
                 StringBuilder builder = new StringBuilder();
                 builder.Append(option.Key.PadRight(4));
                 builder.Append(aliases.PadRight(12));
                 builder.Append(string.Format(option.Description, command));
 
-                Messages.Normal(builder.ToString());
+                Context.Messages.Normal(builder.ToString());
             }
         }
     }

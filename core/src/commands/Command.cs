@@ -24,29 +24,7 @@ namespace Delineate.Fast.Core.Commands
     {
         #region Properties
 
-        /// <summary>
-        /// The command info for this command
-        /// </summary>
-        /// <returns>The info</returns>
-        public CommandInfo Info { get; set; }
-        
-        /// <summary>
-        /// The Output manager assigned to this command 
-        /// </summary>
-        /// <returns>Class that provides the outputting functionality</returns>
-        public MessageManager Outputs = new MessageManager();
-
-        /// <summary>
-        /// Options that are available for this command
-        /// </summary>
-        /// <returns>The list of options</returns>
-        public CommandOptions Options = new CommandOptions();
-
-        /// <summary>
-        /// The arguments which the command is currently executing with
-        /// </summary>
-        /// <returns>The args</returns>
-        public CommandArgs Args {get; set;}
+        public CommandContext Context { get; set; }
 
         /// <summary>
         /// Reference to the root node of the command
@@ -68,19 +46,19 @@ namespace Delineate.Fast.Core.Commands
         /// <param name="programArgs">The arguments that were provided to the program</param>
         public void Execute(string[] programArgs)
         {
-            Debug.Indent();
-            Debug.WriteLine("Executing command {0} ...", GetType().FullName);
+            Context.Logs.Log(GetType().FullName);
 
             //Sets the Output accordingly
-            Outputs.IsQuiet = false;
+            Context.Messages.IsQuiet = false;
 
             // Parses the args
-            Args = new CommandArgs(programArgs, Options);
+            Context.Args = new CommandArgs(programArgs, Context);
 
             //Returns the correct handler and executes
             ICommandHandler handler = GetHandler();
             handler.Execute();
-            Outputs.Flush();
+            
+            Context.Messages.Flush();
         }
 
         /// <summary>
@@ -89,13 +67,13 @@ namespace Delineate.Fast.Core.Commands
         /// <returns>Returns the handler to use</returns>
         private ICommandHandler GetHandler()
         {
-            if(Args.HasErrors)
+            if(Context.Args.HasErrors)
                 return CreateHandler<ArgsCommandHandler>();
 
-            if(Args.Has("-h"))
+            if(Context.Args.Has("-h"))
                 return CreateHandler<HelpCommandHandler>();
 
-            if(Args.Has("-v"))
+            if(Context.Args.Has("-v"))
                 return CreateHandler<VersionCommandHandler>();
 
             return CreateHandler<ExecuteCommandHandler>();
@@ -105,8 +83,7 @@ namespace Delineate.Fast.Core.Commands
         {
             return new T()
             {
-                Command = this,
-                Messages = this.Outputs
+                Context = Context
             };
         } 
 
@@ -127,30 +104,31 @@ namespace Delineate.Fast.Core.Commands
         /// </summary>
         protected internal virtual void Plan() 
         {
-            Outputs.Blank();
-            Outputs.Normal("Planning ...");
-            Outputs.Blank();
+            
+            Context.Messages.Blank();
+            Context.Messages.Normal("Planning ...");
+            Context.Messages.Blank();
 
             IsSafeToApply = true;
             
-            Outputs.Indent();
-            Outputs.Nest();
+            Context.Messages.Indent();
+            Context.Messages.Nest();
             Plan(Root.Nodes);
-            Outputs.Unnest();
-            Outputs.Unindent();
+            Context.Messages.Unnest();
+            Context.Messages.Unindent();
 
             if( ! IsSafeToApply )
             {
-                if( Args.Has("-f"))
+                if( Context.Args.Has("-f"))
                 {
-                    Outputs.Blank();
-                    Outputs.Success("Warnings have been overriden");
+                    Context.Messages.Blank();
+                    Context.Messages.Success("Warnings have been overriden");
                     IsSafeToApply = true;
                 }
                 else
                 {
-                    Outputs.Blank();
-                    Outputs.Error("Commmand could not be completed, please review the warnings.");
+                    Context.Messages.Blank();
+                    Context.Messages.Error("Commmand could not be completed, please review the warnings.");
                 }
             }
         }
@@ -169,9 +147,9 @@ namespace Delineate.Fast.Core.Commands
                     if( node.Plan() )
                         IsSafeToApply = false;
 
-                    Outputs.Indent();
+                    Context.Messages.Indent();
                     Plan(node.Nodes);
-                    Outputs.Unindent();
+                    Context.Messages.Unindent();
                 }
             }
         }
@@ -185,15 +163,15 @@ namespace Delineate.Fast.Core.Commands
         /// </summary>
         protected internal virtual void Apply()
         {   
-            Outputs.Blank();
-            Outputs.Normal("Applying ...");
-            Outputs.Blank();
+            Context.Messages.Blank();
+            Context.Messages.Normal("Applying ...");
+            Context.Messages.Blank();
 
-            Outputs.Indent();
-            Outputs.Nest();
+            Context.Messages.Indent();
+            Context.Messages.Nest();
             Apply(Root.Nodes);
-            Outputs.Unnest();
-            Outputs.Unindent();
+            Context.Messages.Unnest();
+            Context.Messages.Unindent();
         }
 
         /// <summary>
@@ -208,9 +186,9 @@ namespace Delineate.Fast.Core.Commands
                 {
                     node.Apply();
 
-                    Outputs.Indent();
+                    Context.Messages.Indent();
                     Apply(node.Nodes);
-                    Outputs.Unindent();
+                    Context.Messages.Unindent();
                 }
             }
         }

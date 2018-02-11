@@ -12,7 +12,7 @@ namespace Delineate.Fast.Core.Help
         /// </summary>
         protected override void Handle()
         {   
-            HelpManager help = new HelpManager(Command);
+            HelpManager help = new HelpManager(Context);
             help.Output();
         }
     }

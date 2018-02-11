@@ -113,41 +113,56 @@ namespace Delineate.Fast.Core.Messages
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="line"></param>
+        /// <param name="text"></param>
         /// <param name="isNested"></param>
-        public void Normal(string line)
+        public void Normal(string text)
         {
-            Add(line, MessageLevel.Normal);
+            Add(text, MessageLevel.Normal);
         }
 
-        public void Important(string line)
+        public void Normal(string text, params string[] values  )
         {
-            Add(line, MessageLevel.Important);
+            Add(string.Format(text, values), MessageLevel.Normal);
         }
 
-        public void Error(string line)
+        public void Important(string text)
         {
-            Add(line, MessageLevel.Error);
+            Add(text, MessageLevel.Important);
         }
 
-        public void Link(string line)
+        public void Error(string text)
         {
-            Add(line, MessageLevel.Link);
+            Add(text, MessageLevel.Error);
+        }
+
+        public void Link(string text)
+        {
+            Add(text, MessageLevel.Link);
         }
     
-        public void Warning(string line)
+        public void Warning(string text)
         {
-            Add(line, MessageLevel.Warning);
+            Add(text, MessageLevel.Warning);
         }
 
-        public void Info(string line)
+        public void Warning(string text, params string[] values  )
         {
-            Add(line, MessageLevel.Info);
+            Add(string.Format(text, values), MessageLevel.Warning);
         }
 
-        public void Success(string line)
+        public void Info(string text)
         {
-            Add(line, MessageLevel.Success);
+            Add(text, MessageLevel.Info);
+        }
+
+        public void Success(string text)
+        {
+            Add(text, MessageLevel.Success);
+        }
+
+        public void Success(string text, params string[] values  )
+        {
+            Add(string.Format(text, values), MessageLevel.Success);
         }
 
         public void Blank()

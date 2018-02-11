@@ -9,9 +9,9 @@ namespace Delineate.Fast.Core.Help
         {
             string helpResource = string.Concat(
                                         "http://www.delineate.io/fast/",
-                                        Command.Info.Key.Replace(":", "/"));
+                                        Context.Info.Key.Replace(":", "/"));
 
-            Messages.Link(helpResource);
+            Context.Messages.Link(helpResource);
         }
     }
 }

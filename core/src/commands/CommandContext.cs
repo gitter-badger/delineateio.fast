@@ -1,29 +1,45 @@
 using System;
+
 using Delineate.Fast.Core.Messages;
 
 namespace Delineate.Fast.Core.Commands
 {
-    /// <summary>
-    /// Container for the current context
-    /// </summary>
     public class CommandContext
     {
         /// <summary>
-        /// The info for the command
+        /// The logger of the context
+        /// </summary>
+        /// <returns></returns>
+        public ICommandLogger Logs = new CommandLogger();
+
+        /// <summary>
+        /// The messages 
+        /// </summary>
+        /// <returns></returns>
+        public MessageManager Messages = new MessageManager();
+
+        /// <summary>
+        /// Available options for the current command
+        /// </summary>
+        /// <returns>The available options for the command</returns>
+        public CommandOptions Options = new CommandOptions();
+
+        /// <summary>
+        /// Info about the command
         /// </summary>
         /// <returns></returns>
         public CommandInfo Info { get; set; }
 
         /// <summary>
-        /// The command that is being executed
+        /// Args for the command execution
         /// </summary>
-        /// <returns></returns>
-        public Command Command { get; set; }
+        /// <returns>Returns the args object</returns>
+        public CommandArgs Args {get; set;}
 
         /// <summary>
-        /// The Outputs manager for the command
+        /// The command being run in the current context
         /// </summary>
         /// <returns></returns>
-        public MessageManager Outputs { get; set; }
+        public Command Command {get; set;}
     }
 }

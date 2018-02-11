@@ -14,10 +14,10 @@ namespace Delineate.Fast.Core.Commands
         /// </summary>
         protected override void Handle()
         {
-            Command.Outputs.Blank();
-            Command.Outputs.Error("There was an error parsing the provided arguments");
+            Context.Messages.Blank();
+            Context.Messages.Error("There was an error parsing the provided arguments");
 
-            HelpManager help = new HelpManager(Command);
+            HelpManager help = new HelpManager(Context);
             help.Output();
         }
     }

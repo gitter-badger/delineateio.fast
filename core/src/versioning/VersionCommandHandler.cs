@@ -17,20 +17,20 @@ namespace Delineate.Fast.Core.Versioning
         /// </summary>
         protected override void Handle()
         {
-            Messages.Blank();
-            Messages.Indent();
+            Context.Messages.Blank();
+            Context.Messages.Indent();
 
             // The Fast framework version
-            Messages.Normal(VersionManager.GetFastVersion());
+            Context.Messages.Normal(VersionManager.GetFastVersion());
 
             /// If not core then the plugin version 
-            if( ! Command.Info.IsCore)
-                Messages.Normal(VersionManager.GetPluginVersion(GetType()));
+            if( ! Context.Info.IsCore)
+                Context.Messages.Normal(VersionManager.GetPluginVersion(GetType()));
             
             /// The .NET Core Framework version 
-            Messages.Normal(VersionManager.GetDotNetVersion());
+            Context.Messages.Normal(VersionManager.GetDotNetVersion());
 
-            Messages.Unindent();
+            Context.Messages.Unindent();
         }
     }
 }
