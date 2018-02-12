@@ -1,5 +1,7 @@
 # Fast
 
+[![Join the chat at https://gitter.im/delineateio/fast](https://badges.gitter.im/delineateio/fast.svg)](https://gitter.im/delineateio/fast?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ## Overview
 
 The goal of Fast is to be able to common tasks fast.  It's designed to support repeatability, best practice and consistency whilst remaining extensible for other domains.
