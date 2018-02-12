@@ -2,7 +2,7 @@
 using System.Diagnostics;
 
 using Delineate.Fast.Core.Commands;
-using Delineate.Fast.Core.Messages;
+using Delineate.Fast.Core.Messaging;
 
 namespace Delineate.Fast
 {
@@ -19,7 +19,7 @@ namespace Delineate.Fast
                 CommandContext context = CommandFactory.Create(args);
 
                 //Writes up events to the messages
-                context.Messages.OnFlushed += new MessageEventHandler(Output);
+                context.Messenger.OnFlushed += new MessageEventHandler(Output);
                 
                 //Executes the command 
                 context.Command.Execute(args );

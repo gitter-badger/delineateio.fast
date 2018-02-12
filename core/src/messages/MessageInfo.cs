@@ -3,15 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-using Delineate.Fast.Core.Diagnostics;
+using Delineate.Fast.Core.Logging;
 
-namespace Delineate.Fast.Core.Messages
+namespace Delineate.Fast.Core.Messaging
 {
     /// <summary>
     /// The Command message events args 
     /// </summary>
     [DataContract]
-    public sealed class MessageInfo : IDebuggable
+    public sealed class MessageInfo : ILoggable
     {
         /// <summary>
         /// Lines of the text 

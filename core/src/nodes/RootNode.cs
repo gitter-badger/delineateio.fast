@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 using Delineate.Fast.Core.Commands;
-using Delineate.Fast.Core.Diagnostics;
+using Delineate.Fast.Core.Logging;
 
 namespace Delineate.Fast.Core.Nodes
 {
@@ -13,7 +13,7 @@ namespace Delineate.Fast.Core.Nodes
     /// be used during the plan and Apply command methods
     /// </summary>
     [DataContract]
-    public sealed class RootNode : Node, IDebuggable
+    public sealed class RootNode : Node, ILoggable
     {
         #region Constants
 

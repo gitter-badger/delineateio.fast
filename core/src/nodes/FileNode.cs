@@ -6,8 +6,8 @@ using System.Runtime.Serialization;
 
 
 using Delineate.Fast.Core.Commands;
-using Delineate.Fast.Core.Diagnostics;
-using Delineate.Fast.Core.Messages;
+using Delineate.Fast.Core.Logging;
+using Delineate.Fast.Core.Messaging;
 
 namespace Delineate.Fast.Core.Nodes
 {
@@ -16,7 +16,7 @@ namespace Delineate.Fast.Core.Nodes
     /// be used during the plan and Apply command methods
     /// </summary>
     [DataContract]
-    public sealed class FileNode : ActionNode, IDebuggable
+    public sealed class FileNode : ActionNode, ILoggable
     {
         #region Properties 
 
@@ -113,11 +113,11 @@ namespace Delineate.Fast.Core.Nodes
 
             if(File.Exists(path))
             {
-                Context.Messages.Warning("File '{0}' will be overwritten", Name);
+                Context.Messenger.Warning("File '{0}' will be overwritten", Name);
             }
             else
             {
-                Context.Messages.Normal("File '{0}' will be created", Name);
+                Context.Messenger.Normal("File '{0}' will be created", Name);
             }
 
             return File.Exists(path);
@@ -133,11 +133,11 @@ namespace Delineate.Fast.Core.Nodes
 
             if(File.Exists(path))
             {
-                Context.Messages.Warning("File '{0}' will be deleted", Name);
+                Context.Messenger.Warning("File '{0}' will be deleted", Name);
             }
             else
             {
-                Context.Messages.Normal("File '{0}' doesn't exist", Name);
+                Context.Messenger.Normal("File '{0}' doesn't exist", Name);
             }
 
             return File.Exists(path);
@@ -162,7 +162,7 @@ namespace Delineate.Fast.Core.Nodes
 
             File.Copy(from, FullPath);
 
-            Context.Messages.Success("File '{0}' created from '{1}'", Name, TemplateFileName);
+            Context.Messenger.Success("File '{0}' created from '{1}'", Name, TemplateFileName);
         }
 
         /// <summary>
@@ -172,7 +172,7 @@ namespace Delineate.Fast.Core.Nodes
         {
             File.Create(FullPath);
 
-            Context.Messages.Success("File '{0}' created", Name);
+            Context.Messenger.Success("File '{0}' created", Name);
         }
 
         /// <summary>
@@ -182,7 +182,7 @@ namespace Delineate.Fast.Core.Nodes
         {
             File.Delete(FullPath);
 
-            Context.Messages.Success("File '{0}' deleted", Name, TemplateFileName);
+            Context.Messenger.Success("File '{0}' deleted", Name, TemplateFileName);
         }
 
         #endregion

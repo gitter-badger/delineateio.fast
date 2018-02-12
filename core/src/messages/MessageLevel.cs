@@ -1,4 +1,4 @@
-namespace Delineate.Fast.Core.Messages
+namespace Delineate.Fast.Core.Messaging
 {
     public enum MessageLevel
     {

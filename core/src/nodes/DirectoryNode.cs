@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using Delineate.Fast.Core.Messages;
+using Delineate.Fast.Core.Messaging;
 
 namespace Delineate.Fast.Core.Nodes
 {
@@ -58,10 +58,10 @@ namespace Delineate.Fast.Core.Nodes
         private bool PlanCreateDirectory()
         {
             if(WorkingDirectory.Exists)
-                Context.Messages.Normal("Directory '{0}' exists", Name);
+                Context.Messenger.Normal("Directory '{0}' exists", Name);
             
             else
-                Context.Messages.Normal("Directory '{0}' will be created", Name);
+                Context.Messenger.Normal("Directory '{0}' will be created", Name);
 
             return false;
         }
@@ -73,10 +73,10 @@ namespace Delineate.Fast.Core.Nodes
         private bool PlanDeleteDirectory()
         {
             if(WorkingDirectory.Exists)
-                Context.Messages.Warning("Directory '{0}' will be deleted", Name);
+                Context.Messenger.Warning("Directory '{0}' will be deleted", Name);
 
             else
-                Context.Messages.Normal("Directory '{0}' doesn't exist", Name);
+                Context.Messenger.Normal("Directory '{0}' doesn't exist", Name);
 
             return WorkingDirectory.Exists;
         }
@@ -92,12 +92,12 @@ namespace Delineate.Fast.Core.Nodes
         {
             if(Directory.Exists(WorkingDirectory.FullName))
             {
-                Context.Messages.Normal("Directory '{0}' existed", Name);
+                Context.Messenger.Normal("Directory '{0}' existed", Name);
             }
             else
             {
                 Directory.CreateDirectory(WorkingDirectory.FullName);
-                Context.Messages.Success("Directory '{0}' created", Name);
+                Context.Messenger.Success("Directory '{0}' created", Name);
             }
         }
 
@@ -109,11 +109,11 @@ namespace Delineate.Fast.Core.Nodes
             if(Directory.Exists(WorkingDirectory.FullName))
             {
                 Directory.Delete(WorkingDirectory.FullName, true);
-                Context.Messages.Success("Directory '{0}' deleted", Name);
+                Context.Messenger.Success("Directory '{0}' deleted", Name);
             }
             else
             {
-                 Context.Messages.Normal("Directory '{0}' didn't exist", Name);
+                 Context.Messenger.Normal("Directory '{0}' didn't exist", Name);
             }
         }
 

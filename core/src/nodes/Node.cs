@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 using Delineate.Fast.Core.Commands;
-using Delineate.Fast.Core.Diagnostics;
+using Delineate.Fast.Core.Logging;
 
 namespace Delineate.Fast.Core.Nodes
 {
@@ -15,7 +15,7 @@ namespace Delineate.Fast.Core.Nodes
     [DataContract]
     [KnownType(typeof(FileNode))]
     [KnownType(typeof(DirectoryNode))]
-    public abstract class Node : IDebuggable
+    public abstract class Node : ILoggable
     {
         #region Properties
 
@@ -49,7 +49,7 @@ namespace Delineate.Fast.Core.Nodes
         /// are n o nodes then null if returned
         /// </returns>
         [DataMember]
-        public List<Node> Nodes { get; set; }
+        public IList<Node> Nodes { get; set; }
 
         /// <summary>
         /// Return the current directory

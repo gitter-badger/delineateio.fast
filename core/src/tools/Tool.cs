@@ -25,7 +25,7 @@ namespace Delineate.Fast.Core.Tools
         /// <returns></returns>
         public string Version { get; set; }
 
-        public List<string> AllVersions
+        public IList<string> AllVersions
         {
             get
             {
@@ -70,7 +70,7 @@ namespace Delineate.Fast.Core.Tools
         /// Returns a sorted list of installed versions
         /// </summary>
         /// <returns>The list of installed versions</returns>
-        public abstract List<string> GetAllVersions(); 
+        public abstract IList<string> GetAllVersions(); 
 
         /// <summary>
         /// Performs the install of the tool

@@ -5,11 +5,12 @@ using System.Resources;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-using Delineate.Fast.Core.Diagnostics;
-using Delineate.Fast.Core.Messages;
+using Delineate.Fast.Core.Logging;
+using Delineate.Fast.Core.Messaging;
 using Delineate.Fast.Core.Help;
 using Delineate.Fast.Core.Nodes;
 using Delineate.Fast.Core.Versioning;
+using Delineate.Fast.Core.Commands.Handlers;
 
 namespace Delineate.Fast.Core.Commands
 {
@@ -49,7 +50,7 @@ namespace Delineate.Fast.Core.Commands
             Context.Logs.Log(GetType().FullName);
 
             //Sets the Output accordingly
-            Context.Messages.IsQuiet = false;
+            Context.Messenger.IsQuiet = false;
 
             // Parses the args
             Context.Args = new CommandArgs(programArgs, Context);
@@ -58,7 +59,7 @@ namespace Delineate.Fast.Core.Commands
             ICommandHandler handler = GetHandler();
             handler.Execute();
             
-            Context.Messages.Flush();
+            Context.Messenger.Flush();
         }
 
         /// <summary>
@@ -105,30 +106,30 @@ namespace Delineate.Fast.Core.Commands
         protected internal virtual void Plan() 
         {
             
-            Context.Messages.Blank();
-            Context.Messages.Normal("Planning ...");
-            Context.Messages.Blank();
+            Context.Messenger.Blank();
+            Context.Messenger.Normal("Planning ...");
+            Context.Messenger.Blank();
 
             IsSafeToApply = true;
             
-            Context.Messages.Indent();
-            Context.Messages.Nest();
+            Context.Messenger.Indent();
+            Context.Messenger.Nest();
             Plan(Root.Nodes);
-            Context.Messages.Unnest();
-            Context.Messages.Unindent();
+            Context.Messenger.Unnest();
+            Context.Messenger.Unindent();
 
             if( ! IsSafeToApply )
             {
                 if( Context.Args.Has("-f"))
                 {
-                    Context.Messages.Blank();
-                    Context.Messages.Success("Warnings have been overriden");
+                    Context.Messenger.Blank();
+                    Context.Messenger.Success("Warnings have been overriden");
                     IsSafeToApply = true;
                 }
                 else
                 {
-                    Context.Messages.Blank();
-                    Context.Messages.Error("Commmand could not be completed, please review the warnings.");
+                    Context.Messenger.Blank();
+                    Context.Messenger.Error("Commmand could not be completed, please review the warnings.");
                 }
             }
         }
@@ -138,7 +139,7 @@ namespace Delineate.Fast.Core.Commands
         /// </summary>
         /// <param name="nodes">Nodes to perform the action for</param>
         /// <param name="indent">The current indent level of messages</param>
-        private void Plan(List<Node> nodes)
+        private void Plan(IList<Node> nodes)
         {
             if(nodes != null && nodes.Count > 0)
             {
@@ -147,9 +148,9 @@ namespace Delineate.Fast.Core.Commands
                     if( node.Plan() )
                         IsSafeToApply = false;
 
-                    Context.Messages.Indent();
+                    Context.Messenger.Indent();
                     Plan(node.Nodes);
-                    Context.Messages.Unindent();
+                    Context.Messenger.Unindent();
                 }
             }
         }
@@ -163,22 +164,22 @@ namespace Delineate.Fast.Core.Commands
         /// </summary>
         protected internal virtual void Apply()
         {   
-            Context.Messages.Blank();
-            Context.Messages.Normal("Applying ...");
-            Context.Messages.Blank();
+            Context.Messenger.Blank();
+            Context.Messenger.Normal("Applying ...");
+            Context.Messenger.Blank();
 
-            Context.Messages.Indent();
-            Context.Messages.Nest();
+            Context.Messenger.Indent();
+            Context.Messenger.Nest();
             Apply(Root.Nodes);
-            Context.Messages.Unnest();
-            Context.Messages.Unindent();
+            Context.Messenger.Unnest();
+            Context.Messenger.Unindent();
         }
 
         /// <summary>
         /// Recursive method that applies the changes
         /// </summary>
         /// <param name="nodes">Nodes to perform the action for</param>
-        private void Apply(List<Node> nodes)
+        private void Apply(IList<Node> nodes)
         {
             if(nodes != null && nodes.Count > 0)
             {
@@ -186,9 +187,9 @@ namespace Delineate.Fast.Core.Commands
                 {
                     node.Apply();
 
-                    Context.Messages.Indent();
+                    Context.Messenger.Indent();
                     Apply(node.Nodes);
-                    Context.Messages.Unindent();
+                    Context.Messenger.Unindent();
                 }
             }
         }

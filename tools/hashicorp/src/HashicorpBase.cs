@@ -29,9 +29,9 @@ namespace Delineate.Fast.Tools.Hashicorp
         /// <remarks>
         /// Returns a list of zero items if no versions are installed
         /// </remarks>
-        public override List<string> GetAllVersions()
+        public override IList<string> GetAllVersions()
         {
-            List<string> versions = new List<string>();
+            IList<string> versions = new List<string>();
             DirectoryInfo tool = GetToolDirectory();
 
             if(tool.Exists)

@@ -1,6 +1,6 @@
-using Delineate.Fast.Core.Commands;
+using Delineate.Fast.Core.Help;
 
-namespace Delineate.Fast.Core.Help
+namespace Delineate.Fast.Core.Commands.Handlers
 {
     /// <summary>
     /// Help handler for handling help requests (--help)
@@ -12,8 +12,8 @@ namespace Delineate.Fast.Core.Help
         /// </summary>
         protected override void Handle()
         {   
-            HelpManager help = new HelpManager(Context);
-            help.Output();
+            HelpSections help = new HelpSections(Context);
+            help.DisplaySections();
         }
     }
 }

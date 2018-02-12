@@ -1,4 +1,4 @@
-namespace Delineate.Fast.Core.Commands
+namespace Delineate.Fast.Core.Commands.Handlers
 {
     /// <summary>
     /// Interface implemented by command handlers

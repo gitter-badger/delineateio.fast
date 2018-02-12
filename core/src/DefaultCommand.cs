@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using Delineate.Fast.Core.Commands;
-using Delineate.Fast.Core.Messages;
+using Delineate.Fast.Core.Messaging;
 
 
 namespace Delineate.Fast.Core

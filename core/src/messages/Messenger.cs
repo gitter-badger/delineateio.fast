@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 
-namespace Delineate.Fast.Core.Messages
+namespace Delineate.Fast.Core.Messaging
 {
     public delegate void MessageEventHandler(object sender, MessageEventArgs e);
 
     /// <summary>
     /// Utility class for managing output
     /// </summary>
-    public sealed class MessageManager
+    public sealed class Messenger : IMessenger
     {
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Delineate.Fast.Core.Messages
         /// The current collection of unflushed events
         /// </summary>
         /// <returns></returns>
-        private List<MessageInfo> Messages {get; set;} 
+        private IList<MessageInfo> Messages {get; set;} 
 
         /// <summary>
         /// Indicates if output is to be autom flushed
@@ -111,60 +111,104 @@ namespace Delineate.Fast.Core.Messages
         #region Add
 
         /// <summary>
-        /// 
+        /// Writes an normal message
         /// </summary>
-        /// <param name="text"></param>
-        /// <param name="isNested"></param>
+        /// <param name="text">The message</param>
         public void Normal(string text)
         {
             Add(text, MessageLevel.Normal);
         }
 
+        /// <summary>
+        /// Writes a nomral message with additional
+        /// formatted values
+        /// </summary>
+        /// <param name="text">The message</param>
+        /// <param name="values">The values to format</param>
         public void Normal(string text, params string[] values  )
         {
             Add(string.Format(text, values), MessageLevel.Normal);
         }
 
+        /// <summary>
+        /// Writes an important message
+        /// </summary>
+        /// <param name="text">The message</param>
         public void Important(string text)
         {
             Add(text, MessageLevel.Important);
         }
 
+        /// <summary>
+        /// Writes an error message
+        /// </summary>
+        /// <param name="text">The message</param>
         public void Error(string text)
         {
             Add(text, MessageLevel.Error);
         }
 
+        /// <summary>
+        /// Writes an link message
+        /// </summary>
+        /// <param name="text">The message</param>
         public void Link(string text)
         {
             Add(text, MessageLevel.Link);
         }
-    
+
+        /// <summary>
+        /// Writes an warning message
+        /// </summary>
+        /// <param name="text">The message</param>
         public void Warning(string text)
         {
             Add(text, MessageLevel.Warning);
         }
 
+        /// <summary>
+        /// Writes an warning message with additional
+        /// formatted values
+        /// </summary>
+        /// <param name="text">The message</param>
+        /// <param name="values">The values to format</param>
         public void Warning(string text, params string[] values  )
         {
             Add(string.Format(text, values), MessageLevel.Warning);
         }
 
+        /// <summary>
+        /// Writes an info message
+        /// </summary>
+        /// <param name="text">The message</param>
         public void Info(string text)
         {
             Add(text, MessageLevel.Info);
         }
 
+        /// <summary>
+        /// Writes a success message
+        /// </summary>
+        /// <param name="text">The message</param>
         public void Success(string text)
         {
             Add(text, MessageLevel.Success);
         }
 
+        /// <summary>
+        /// Writes a success message and formats the values into 
+        /// the base message 
+        /// </summary>
+        /// <param name="text">The base message</param>
+        /// <param name="values">The values to format</param>
         public void Success(string text, params string[] values  )
         {
             Add(string.Format(text, values), MessageLevel.Success);
         }
 
+        /// <summary>
+        /// Writes a blank line to the messenger
+        /// </summary>
         public void Blank()
         {
             Add(string.Empty, MessageLevel.Normal);
@@ -172,6 +216,16 @@ namespace Delineate.Fast.Core.Messages
 
         #endregion
 
+        /// <summary>
+        /// Adds a message to the queue
+        /// </summary>
+        /// <param name="text">The text for the message</param>
+        /// <param name="level">The message level</param>
+        /// <remarks>
+        /// If AUtoFlust is set to true then the message is 
+        /// flushed immediately, if not it is flushed when the
+        /// flush message is called
+        /// <summary>
         private void Add(string text, MessageLevel level)
         {
             if(IsQuiet) return;
@@ -192,7 +246,10 @@ namespace Delineate.Fast.Core.Messages
         }
 
         #region Flush
-    
+        
+        /// <summary>
+        /// Flushes messages that have to been returned to subscribers
+        /// </summary>
         public void Flush()
         {
             MessageEventHandler handler = OnFlushed;   

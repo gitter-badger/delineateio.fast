@@ -1,6 +1,6 @@
 using Delineate.Fast.Core.Help;
 
-namespace Delineate.Fast.Core.Commands
+namespace Delineate.Fast.Core.Commands.Handlers
 {
     /// <summary>
     /// Args Error handler used when there are errors
@@ -14,11 +14,11 @@ namespace Delineate.Fast.Core.Commands
         /// </summary>
         protected override void Handle()
         {
-            Context.Messages.Blank();
-            Context.Messages.Error("There was an error parsing the provided arguments");
+            Context.Messenger.Blank();
+            Context.Messenger.Error("There was an error parsing the provided arguments");
 
-            HelpManager help = new HelpManager(Context);
-            help.Output();
+            HelpSections help = new HelpSections(Context);
+            help.DisplaySections();
         }
     }
 }

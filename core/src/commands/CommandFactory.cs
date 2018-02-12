@@ -5,7 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-using Delineate.Fast.Core.Diagnostics;
+using Delineate.Fast.Core.Logging;
 using Delineate.Fast.Core.Nodes;
 
 namespace Delineate.Fast.Core.Commands
@@ -46,7 +46,7 @@ namespace Delineate.Fast.Core.Commands
         private static void SetCommand(CommandContext context, string[] programArgs)
         {
             Command command = Commands["default"];
-            List<string> args = new List<string>();
+            IList<string> args = new List<string>();
 
             for(int i = 0; i < programArgs.Length; i++)
             {
@@ -148,7 +148,7 @@ namespace Delineate.Fast.Core.Commands
             if( info != null )
             {
                 context.Info = info;
-                context.Logs.Log(info.Debug());
+                context.Logs.Log(info.ToLog());
             } 
         }
 
@@ -157,7 +157,7 @@ namespace Delineate.Fast.Core.Commands
             if( option != null)
             {
                 context.Options.Add(option);
-                context.Logs.Log(option.Debug());
+                context.Logs.Log(option.ToLog());
             }
         }
     }

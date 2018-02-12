@@ -1,9 +1,9 @@
 using System;
 using System.Diagnostics;
 
-using Delineate.Fast.Core.Messages;
+using Delineate.Fast.Core.Messaging;
 
-namespace Delineate.Fast.Core.Commands
+namespace Delineate.Fast.Core.Commands.Handlers
 {
     /// <summary>
     /// The Base class of all the assigned handlers
@@ -25,20 +25,20 @@ namespace Delineate.Fast.Core.Commands
         {
             if(Context.Info.IsDefault)
             {
-                Context.Messages.Blank();
-                Context.Messages.Warning("No command was found, information below if for Fast");
+                Context.Messenger.Blank();
+                Context.Messenger.Warning("No command was found, information below if for Fast");
             }
 
-            Context.Messages.Blank();
-            Context.Messages.Important("Running Fast ...");
+            Context.Messenger.Blank();
+            Context.Messenger.Important("Running Fast ...");
 
             Context.Logs.Log(this.GetType().FullName);
 
             Handle();
 
-            Context.Messages.Blank();
-            Context.Messages.Success("Fast completed successfully!");
-            Context.Messages.Blank();
+            Context.Messenger.Blank();
+            Context.Messenger.Success("Fast completed successfully!");
+            Context.Messenger.Blank();
         }
         
         /// <summary>

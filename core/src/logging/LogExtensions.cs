@@ -3,19 +3,19 @@ using System.IO;
 using System.Diagnostics;
 using System.Runtime.Serialization.Json;
 
-namespace Delineate.Fast.Core.Diagnostics
+namespace Delineate.Fast.Core.Logging
 {
     /// <summary>
     /// Extensions methods that can be 
     /// </summary>
-    public static class DebugExtensions
+    public static class LogExtensions
     {
         /// <summary>
         /// Extension method that can print serialised objects to the 
         /// </summary>
-        /// <param name="instance"></param>
+        /// <param name="instance">The instance to be converted to Json</param>
         /// <returns></returns>
-        public static string Debug(this IDebuggable instance)
+        public static string ToLog(this ILoggable instance)
         {
             DataContractJsonSerializer serializer = new DataContractJsonSerializer(instance.GetType());
 

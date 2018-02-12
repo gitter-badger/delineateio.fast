@@ -2,7 +2,7 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 using Delineate.Fast.Core.Commands;
-using Delineate.Fast.Core.Messages;
+using Delineate.Fast.Core.Messaging;
 
 namespace Delineate.Fast
 {
@@ -12,6 +12,10 @@ namespace Delineate.Fast
     /// </summary>
     public static class ConsoleFormatter
     {
+        /// <summary>
+        /// Writes a message event args to the console 
+        /// </summary>
+        /// <param name="e">The event args to write</param>
         public static void Write(MessageEventArgs e)
         {
             foreach(MessageInfo message in e.Messages)
@@ -23,7 +27,7 @@ namespace Delineate.Fast
         /// <summary>
         /// Writes the messasges from the commands
         /// </summary>
-        /// <param name="messages"></param>
+        /// <param name="message">Writes an individual message</param>
         public static void Write(MessageInfo message)
         {
             StringBuilder builder = new StringBuilder();
@@ -43,15 +47,35 @@ namespace Delineate.Fast
             Console.ForegroundColor = ConsoleColor.White;
         }
 
+        /// <summary>
+        /// Writes exception detail to the output
+        /// </summary>
+        /// <param name="exception">The exception to write the detail for</param>
         public static void WriteException(Exception exception)
         {
-            Write(new MessageInfo()
+            string[] values = new string[]
+                                        {
+                                            exception.Message,
+                                            exception.Source,
+                                            exception.StackTrace
+                                        };
+
+            foreach(string text in values)
             {
-                Text = exception.Message,
-                Level = MessageLevel.Error
-            });
+                Write(new MessageInfo()
+                {
+                    Text = text,
+                    Level = MessageLevel.Error
+                });
+            }
         }
 
+        /// <summary>
+        /// Converts the generic framework message type to
+        /// the UI specific ConSolColor for display 
+        /// </summary>
+        /// <param name="level">The level of the message</param>
+        /// <returns>Return the right ConsoleColor</returns>
         private static ConsoleColor GetColor(MessageLevel level)
         {
             switch(level)

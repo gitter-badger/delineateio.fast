@@ -1,14 +1,24 @@
+using System;
 using System.Text;
+
 using Delineate.Fast.Core.Commands;
-using Delineate.Fast.Core.Messages;
+using Delineate.Fast.Core.Messaging;
 
 namespace Delineate.Fast.Core.Help
 {
+    /// <summary>
+    /// Concrete implementation for displaying the options 
+    /// help section
+    /// </summary>
     public class OptionsHelpSection : BaseHelpSection
     {
+        /// <summary>
+        /// Displays the Options detail for each option that 
+        /// can be used in conjunction with the command
+        /// </summary>
         protected override void AddDetail()
         {
-            foreach(CommandOption option in Context.Options.Items)
+            foreach(CommandOption option in Context.Options)
             {           
                 string aliases = "[" + string.Join(",", option.Aliases) + "]";
                 string command = Context.Info.Key.Replace(":", " ");
@@ -18,7 +28,7 @@ namespace Delineate.Fast.Core.Help
                 builder.Append(aliases.PadRight(12));
                 builder.Append(string.Format(option.Description, command));
 
-                Context.Messages.Normal(builder.ToString());
+                Context.Messenger.Normal(builder.ToString());
             }
         }
     }

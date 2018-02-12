@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Delineate.Fast.Core.Commands;
-using Delineate.Fast.Core.Messages;
+using Delineate.Fast.Core.Messaging;
 
 namespace Delineate.Fast.Core.Help
 {
@@ -24,7 +24,7 @@ namespace Delineate.Fast.Core.Help
         /// The message manager to use for notifications
         /// </summary>
         /// <returns>The message manager</returns>
-        public CommandContext Context { get; internal set; }
+        public ICommandContext Context { get; internal set; }
 
         /// <summary>
         /// The header text to be used for 
@@ -41,9 +41,9 @@ namespace Delineate.Fast.Core.Help
             {
                 AddHeader();
                 
-                Context.Messages.Indent(2);
+                Context.Messenger.Indent(2);
                 AddDetail();
-                Context.Messages.Unindent(2);
+                Context.Messenger.Unindent(2);
             }
         }
 
@@ -53,11 +53,11 @@ namespace Delineate.Fast.Core.Help
         /// <param name="line">The header to add</param>
         protected void AddHeader()
         {
-            Context.Messages.Indent();
-            Context.Messages.Blank();
-            Context.Messages.Normal(Header.ToUpper());
-            Context.Messages.Unindent();
-            Context.Messages.Blank();
+            Context.Messenger.Indent();
+            Context.Messenger.Blank();
+            Context.Messenger.Normal(Header.ToUpper());
+            Context.Messenger.Unindent();
+            Context.Messenger.Blank();
         }
 
         /// <summary>

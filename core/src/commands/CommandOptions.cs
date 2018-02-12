@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Delineate.Fast.Core.Commands
@@ -6,7 +7,7 @@ namespace Delineate.Fast.Core.Commands
     /// <summary>
     /// Wrapper class for managing a list of available options
     /// </summary>
-    public sealed class CommandOptions
+    public sealed class CommandOptions: ICommandOptions
     {   
         #region Properties 
 
@@ -14,7 +15,7 @@ namespace Delineate.Fast.Core.Commands
         /// Dictionary of the available options
         /// </summary>
         /// <returns>Collection of options keyed on the primary pair</returns>
-        private Dictionary<string, CommandOption> Options = new Dictionary<string, CommandOption>();
+        private SortedDictionary<string, ICommandOption> Options = new SortedDictionary<string, ICommandOption>();
 
         /// <summary>
         /// Access via the alias key to the options
@@ -22,46 +23,45 @@ namespace Delineate.Fast.Core.Commands
         /// <returns></returns>
         private Dictionary<string, string> Aliases = new Dictionary<string, string>();
 
-        /// <summary>
-        /// Returns 
-        /// </summary>
-        /// <returns></returns>
-        public List<CommandOption> Items = new List<CommandOption>();
+        #endregion
 
+        #region Enumerators
+
+        /// <summary>
+        /// Enumerator for the options collection 
+        /// </summary>
+        /// <returns>Returns the enumerator</returns>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
+        }
+
+        /// <summary>
+        /// Enumerator for the options collection 
+        /// </summary>
+        /// <returns>Returns the enumerator</returns>
+        public IEnumerator<CommandOption> GetEnumerator()
+        {
+            foreach (CommandOption option in Options.Values)
+            {
+                yield return option;
+            }
+        }
+        
         #endregion
 
         /// <summary>
         /// Adds an option to the collection
         /// </summary>
         /// <param name="option">The option to add</param>
-        public void Add(CommandOption option)
+        public void Add(ICommandOption option)
         {            
             Options.Add(option.Key, option);
             Aliases.Add(option.Key, option.Key);
-            Items.Add(option);
 
             if(option.Aliases != null && option.Aliases.Length > 0)
                 foreach(string alias in option.Aliases.Split(","))
                     Aliases.Add(alias, option.Key);
-        }
-
-        /// <summary>
-        /// Returns the Option object with the details of the option
-        /// </summary>
-        /// <param name="key">The key of the option to return</param>
-        /// <returns>
-        /// Returns the requested option details,
-        /// if the option is available returns null
-        /// </returns>
-        public CommandOption Get(string key)
-        {
-            if(Has(key))
-            {
-                string secondaryKey = Aliases[key];
-                return Options[secondaryKey];
-            }
-            else
-                return null;
         }
         
         /// <summary>

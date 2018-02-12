@@ -1,7 +1,7 @@
 using System;
-using Delineate.Fast.Core.Commands;
+using Delineate.Fast.Core.Versioning;
 
-namespace Delineate.Fast.Core.Versioning
+namespace Delineate.Fast.Core.Commands.Handlers
 {
     /// <summary>
     /// Version handler that outputs the version numbers
@@ -17,20 +17,20 @@ namespace Delineate.Fast.Core.Versioning
         /// </summary>
         protected override void Handle()
         {
-            Context.Messages.Blank();
-            Context.Messages.Indent();
+            Context.Messenger.Blank();
+            Context.Messenger.Indent();
 
             // The Fast framework version
-            Context.Messages.Normal(VersionManager.GetFastVersion());
+            Context.Messenger.Normal(VersionManager.GetFastVersion());
 
             /// If not core then the plugin version 
             if( ! Context.Info.IsCore)
-                Context.Messages.Normal(VersionManager.GetPluginVersion(GetType()));
+                Context.Messenger.Normal(VersionManager.GetPluginVersion(GetType()));
             
             /// The .NET Core Framework version 
-            Context.Messages.Normal(VersionManager.GetDotNetVersion());
+            Context.Messenger.Normal(VersionManager.GetDotNetVersion());
 
-            Context.Messages.Unindent();
+            Context.Messenger.Unindent();
         }
     }
 }
